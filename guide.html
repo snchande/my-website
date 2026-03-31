@@ -493,8 +493,8 @@
 
     <button id="scroll-top" title="Back to top">↑</button>
 
-    <!-- marked.js — lightweight markdown parser -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@14.0.0/marked.min.js"></script>
+    <!-- marked.js — local copy for offline use -->
+    <script src="marked.min.js"></script>
 
     <script>
         // ==== Markdown Loading & Rendering ====
@@ -505,12 +505,40 @@
 
         const originalContent = {};
 
+        // Load a local file using XMLHttpRequest (works with file:// protocol)
+        function loadLocalFile(url) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        // status 200 = web server, status 0 = file:// protocol
+                        if (xhr.status === 200 || xhr.status === 0) {
+                            if (xhr.responseText) {
+                                resolve(xhr.responseText);
+                            } else {
+                                reject(new Error('Empty response for ' + url));
+                            }
+                        } else {
+                            reject(new Error('HTTP ' + xhr.status + ' for ' + url));
+                        }
+                    }
+                };
+                xhr.onerror = function () {
+                    reject(new Error('Network error loading ' + url));
+                };
+                try {
+                    xhr.send();
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        }
+
         async function loadMarkdown(tab) {
             const container = document.getElementById(tab);
             try {
-                const response = await fetch(mdFiles[tab]);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const text = await response.text();
+                const text = await loadLocalFile(mdFiles[tab]);
 
                 // Configure marked
                 marked.setOptions({
@@ -528,8 +556,19 @@
                     <div style="text-align:center; padding:40px; color:var(--text-secondary)">
                         <p style="font-size:48px; margin-bottom:16px">📄</p>
                         <p><strong>Could not load ${mdFiles[tab]}</strong></p>
-                        <p style="margin-top:8px">Make sure the markdown files are in the same folder as this HTML file.</p>
-                        <p style="margin-top:8px; font-size:13px; color:#cf222e">${err.message}</p>
+                        <p style="margin-top:8px">Make sure these files are in the same folder as guide.html:</p>
+                        <ul style="list-style:none; margin-top:12px; font-family:monospace">
+                            <li>📁 your-folder/</li>
+                            <li>&nbsp;&nbsp;├── guide.html</li>
+                            <li>&nbsp;&nbsp;├── marked.min.js</li>
+                            <li>&nbsp;&nbsp;├── tutorial.md</li>
+                            <li>&nbsp;&nbsp;└── git-commands.md</li>
+                        </ul>
+                        <p style="margin-top:16px; font-size:13px; color:#cf222e">${err.message}</p>
+                        <p style="margin-top:12px; font-size:13px">
+                            <strong>Tip:</strong> If your browser blocks local file loading, try opening in Firefox<br>
+                            or run a local server: <code>python -m http.server 8080</code>
+                        </p>
                     </div>`;
             }
         }
