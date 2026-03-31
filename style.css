@@ -44,3 +44,31 @@ footer {
     padding: 20px;
     color: #586069;
 }
+
+/* Dark mode */
+body.dark {
+    background: #0d1117;
+    color: #c9d1d9;
+}
+
+body.dark header {
+    background: #161b22;
+}
+
+body.dark section {
+    background: #161b22;
+    border-color: #30363d;
+}
+
+body.dark footer {
+    color: #8b949e;
+}
+
+#theme-toggle {
+    background: none;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
