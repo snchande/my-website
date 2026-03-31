@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git & GitHub — Complete Guide</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --text: #24292f;
+            --text-secondary: #57606a;
+            --border: #d0d7de;
+            --accent: #0969da;
+            --accent-light: #ddf4ff;
+            --code-bg: #f6f8fa;
+            --header-bg: #24292f;
+            --tab-hover: #eaeef2;
+            --shadow: rgba(31, 35, 40, 0.12);
+        }
+
+        .dark {
+            --bg: #0d1117;
+            --bg-secondary: #161b22;
+            --text: #e6edf3;
+            --text-secondary: #8b949e;
+            --border: #30363d;
+            --accent: #58a6ff;
+            --accent-light: #162d50;
+            --code-bg: #161b22;
+            --header-bg: #010409;
+            --tab-hover: #1c2128;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Header */
+        .site-header {
+            background: var(--header-bg);
+            color: #fff;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px var(--shadow);
+        }
+
+        .site-header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .site-header h1 svg {
+            width: 28px;
+            height: 28px;
+            fill: #fff;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #theme-toggle {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        #theme-toggle:hover {
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        #search-box {
+            padding: 6px 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 14px;
+            width: 240px;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        #search-box::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        #search-box:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* Tabs */
+        .tab-bar {
+            display: flex;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            position: sticky;
+            top: 56px;
+            z-index: 99;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+            background: var(--tab-hover);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* Content */
+        .content-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 24px 80px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Search highlight */
+        mark {
+            background: #fff8c5;
+            color: #24292f;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .dark mark {
+            background: #634f00;
+            color: #e6edf3;
+        }
+
+        .search-count {
+            text-align: center;
+            padding: 8px 16px;
+            background: var(--accent-light);
+            color: var(--accent);
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            display: none;
+        }
+
+        /* Scroll to top */
+        #scroll-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: transform 0.2s;
+            z-index: 50;
+        }
+
+        #scroll-top:hover {
+            transform: scale(1.1);
+        }
+
+        /* ===== Markdown Rendered Styles ===== */
+
+        .markdown-body h1 {
+            font-size: 2em;
+            font-weight: 600;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            margin: 32px 0 16px;
+        }
+
+        .markdown-body h1:first-child {
+            margin-top: 0;
+        }
+
+        .markdown-body h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            margin: 28px 0 16px;
+        }
+
+        .markdown-body h3 {
+            font-size: 1.25em;
+            font-weight: 600;
+            margin: 24px 0 12px;
+        }
+
+        .markdown-body h4 {
+            font-size: 1em;
+            font-weight: 600;
+            margin: 20px 0 8px;
+        }
+
+        .markdown-body p {
+            margin: 0 0 16px;
+        }
+
+        .markdown-body a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+
+        .markdown-body strong {
+            font-weight: 600;
+        }
+
+        .markdown-body blockquote {
+            padding: 8px 16px;
+            margin: 0 0 16px;
+            border-left: 4px solid var(--accent);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-radius: 0 6px 6px 0;
+        }
+
+        .markdown-body blockquote p {
+            margin: 4px 0;
+        }
+
+        .markdown-body ul,
+        .markdown-body ol {
+            margin: 0 0 16px;
+            padding-left: 2em;
+        }
+
+        .markdown-body li {
+            margin: 4px 0;
+        }
+
+        .markdown-body li + li {
+            margin-top: 4px;
+        }
+
+        .markdown-body code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 85%;
+            background: var(--code-bg);
+            padding: 3px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .markdown-body pre {
+            margin: 0 0 16px;
+            padding: 16px;
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .markdown-body pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            display: block;
+            white-space: pre;
+        }
+
+        /* Copy button on code blocks */
+        .code-wrapper {
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .code-wrapper:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .copy-btn.copied {
+            background: #2da44e;
+            color: #fff;
+            border-color: #2da44e;
+            opacity: 1;
+        }
+
+        .markdown-body hr {
+            height: 2px;
+            background: var(--border);
+            border: none;
+            margin: 32px 0;
+        }
+
+        .markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 0 16px;
+            font-size: 14px;
+        }
+
+        .markdown-body table th,
+        .markdown-body table td {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .markdown-body table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .markdown-body table tr:nth-child(even) {
+            background: var(--bg-secondary);
+        }
+
+        /* Table of contents links */
+        .markdown-body .toc-link {
+            display: inline-block;
+            margin: 2px 0;
+        }
+
+        /* Print */
+        @media print {
+            .site-header, .tab-bar, #scroll-top, #theme-toggle, #search-box, .copy-btn, .search-count {
+                display: none !important;
+            }
+            .content-wrapper {
+                max-width: 100%;
+            }
+            .tab-content {
+                display: block !important;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .site-header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            #search-box {
+                width: 100%;
+                order: 3;
+            }
+
+            .tab-bar {
+                overflow-x: auto;
+                top: 100px;
+            }
+
+            .content-wrapper {
+                padding: 20px 16px 60px;
+            }
+
+            .markdown-body pre {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <h1>
+            <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            Git &amp; GitHub Guide
+        </h1>
+        <div class="header-actions">
+            <input type="text" id="search-box" placeholder="Search (Ctrl+K)..." />
+            <button id="theme-toggle">🌙 Dark</button>
+        </div>
+    </header>
+
+    <div class="search-count" id="search-count"></div>
+
+    <nav class="tab-bar">
+        <button class="tab-btn active" data-tab="tutorial">📖 Step-by-Step Tutorial</button>
+        <button class="tab-btn" data-tab="commands">⚡ Advanced Git Commands</button>
+    </nav>
+
+    <div class="content-wrapper">
+        <div id="tutorial" class="tab-content active">
+            <div class="loading">
+                <div class="spinner"></div>
+                Loading tutorial...
+            </div>
+        </div>
+        <div id="commands" class="tab-content">
+            <div class="loading">
+                <div class="spinner"></div>
+                Loading commands reference...
+            </div>
+        </div>
+    </div>
+
+    <button id="scroll-top" title="Back to top">↑</button>
+
+    <script>
+    /* %%MARKED_JS%% */
+    </script>
+
+    <script>
+        // ==== Base64 Decode Helper ====
+        function b64decode(str) {
+            return decodeURIComponent(atob(str).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
+
+        // ==== Embedded Markdown (base64-encoded by sync-guide.ps1) ====
+        const EMBEDDED = {
+            tutorial: "%%TUTORIAL_B64%%",
+            commands: "%%COMMANDS_B64%%"
+        };
+
+        const mdFiles = {
+            tutorial: 'tutorial.md',
+            commands: 'git-commands.md'
+        };
+
+        const originalContent = {};
+
+        // Try loading .md file via XHR (works on servers + Firefox file://)
+        function loadLocalFile(url) {
+            return new Promise(function(resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if ((xhr.status === 200 || xhr.status === 0) && xhr.responseText) {
+                            resolve(xhr.responseText);
+                        } else {
+                            reject(new Error('XHR failed for ' + url));
+                        }
+                    }
+                };
+                xhr.onerror = function() { reject(new Error('Network error')); };
+                try { xhr.send(); } catch (e) { reject(e); }
+            });
+        }
+
+        async function loadMarkdown(tab) {
+            var container = document.getElementById(tab);
+            var text = null;
+
+            // Try external .md first, fall back to embedded base64
+            try {
+                text = await loadLocalFile(mdFiles[tab]);
+            } catch (e) {
+                try { text = b64decode(EMBEDDED[tab]); } catch (e2) { }
+            }
+
+            if (text) {
+                marked.setOptions({ breaks: false, gfm: true });
+                container.innerHTML = '<div class="markdown-body">' + marked.parse(text) + '</div>';
+                originalContent[tab] = container.innerHTML;
+                addCopyButtons(container);
+            } else {
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-secondary)"><p>Failed to load content.</p></div>';
+            }
+        }
+
+        // ==== Copy Buttons for Code Blocks ====
+        function addCopyButtons(container) {
+            container.querySelectorAll('pre').forEach(function(pre) {
+                var wrapper = document.createElement('div');
+                wrapper.className = 'code-wrapper';
+                pre.parentNode.insertBefore(wrapper, pre);
+                wrapper.appendChild(pre);
+
+                var btn = document.createElement('button');
+                btn.className = 'copy-btn';
+                btn.textContent = 'Copy';
+                btn.addEventListener('click', function() {
+                    var code = pre.querySelector('code') ? pre.querySelector('code').textContent : pre.textContent;
+                    navigator.clipboard.writeText(code).then(function() {
+                        btn.textContent = 'Copied!';
+                        btn.classList.add('copied');
+                        setTimeout(function() {
+                            btn.textContent = 'Copy';
+                            btn.classList.remove('copied');
+                        }, 2000);
+                    });
+                });
+                wrapper.appendChild(btn);
+            });
+        }
+
+        // ==== Tab Switching ====
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(tab).classList.add('active');
+                var q = document.getElementById('search-box').value;
+                if (q) highlightSearch(q);
+            });
+        });
+
+        // ==== Dark Mode Toggle ====
+        var themeToggle = document.getElementById('theme-toggle');
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+            themeToggle.textContent = 'Light';
+        }
+        themeToggle.addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            var isDark = document.documentElement.classList.contains('dark');
+            themeToggle.textContent = isDark ? 'Light' : 'Dark';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // ==== Search ====
+        var searchBox = document.getElementById('search-box');
+        var searchCount = document.getElementById('search-count');
+        var searchTimeout;
+
+        searchBox.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(function() { highlightSearch(searchBox.value); }, 300);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); searchBox.focus(); searchBox.select(); }
+            if (e.key === 'Escape') { searchBox.value = ''; highlightSearch(''); searchBox.blur(); }
+        });
+
+        function highlightSearch(query) {
+            Object.keys(originalContent).forEach(function(tab) {
+                document.getElementById(tab).innerHTML = originalContent[tab];
+                addCopyButtons(document.getElementById(tab));
+            });
+            if (!query || query.length < 2) { searchCount.style.display = 'none'; return; }
+            var totalMatches = 0;
+            var regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+            Object.keys(originalContent).forEach(function(tab) {
+                var container = document.getElementById(tab);
+                var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+                var textNodes = [];
+                while (walker.nextNode()) {
+                    if (!walker.currentNode.parentElement.closest('pre, code, .copy-btn')) textNodes.push(walker.currentNode);
+                }
+                textNodes.forEach(function(node) {
+                    if (regex.test(node.textContent)) {
+                        var matches = node.textContent.match(regex);
+                        totalMatches += matches ? matches.length : 0;
+                        var span = document.createElement('span');
+                        span.innerHTML = node.textContent.replace(regex, '<mark>$1</mark>');
+                        node.parentNode.replaceChild(span, node);
+                    }
+                });
+            });
+            searchCount.textContent = 'Found ' + totalMatches + ' match' + (totalMatches !== 1 ? 'es' : '') + ' for "' + query + '"';
+            searchCount.style.display = 'block';
+        }
+
+        // ==== Scroll to Top ====
+        var scrollTopBtn = document.getElementById('scroll-top');
+        window.addEventListener('scroll', function() {
+            scrollTopBtn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+        });
+        scrollTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ==== Load Content ====
+        loadMarkdown('tutorial');
+        loadMarkdown('commands');
+    </script>
+</body>
+</html>
