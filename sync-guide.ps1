@@ -1,59 +1,61 @@
 <#
 .SYNOPSIS
-    Syncs markdown files into guide.html embedded content.
+    Builds guide.html from markdown files.
 
 .DESCRIPTION
-    Reads tutorial.md and git-commands.md from the same folder,
-    then replaces the embedded <script type="text/markdown"> blocks
-    inside guide.html so offline Chrome/Edge viewing stays in sync.
+    Reads tutorial.md and git-commands.md, base64-encodes them,
+    and generates a fully self-contained guide.html that works
+    offline in any browser (Chrome, Edge, Firefox).
 
 .EXAMPLE
     .\sync-guide.ps1
-    Run from the my-website folder after editing any .md file.
+    Run after editing any .md file to rebuild guide.html.
 #>
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $guideFile = Join-Path $scriptDir "guide.html"
+$templateFile = Join-Path $scriptDir "guide-template.html"
+$markedFile = Join-Path $scriptDir "marked.min.js"
 
-# Map: embedded script tag ID -> markdown file
-$mdMap = @{
-    "embedded-tutorial" = Join-Path $scriptDir "tutorial.md"
-    "embedded-commands" = Join-Path $scriptDir "git-commands.md"
+# Verify required files
+$required = @{
+    "guide-template.html" = $templateFile
+    "marked.min.js"       = $markedFile
+    "tutorial.md"         = Join-Path $scriptDir "tutorial.md"
+    "git-commands.md"     = Join-Path $scriptDir "git-commands.md"
 }
 
-# Verify all files exist
-if (-not (Test-Path $guideFile)) {
-    Write-Host "ERROR: guide.html not found in $scriptDir" -ForegroundColor Red
-    exit 1
-}
-
-foreach ($entry in $mdMap.GetEnumerator()) {
+foreach ($entry in $required.GetEnumerator()) {
     if (-not (Test-Path $entry.Value)) {
-        Write-Host "ERROR: $($entry.Value) not found" -ForegroundColor Red
+        Write-Host "ERROR: $($entry.Key) not found in $scriptDir" -ForegroundColor Red
         exit 1
     }
 }
 
-# Read guide.html
-$html = Get-Content $guideFile -Raw -Encoding UTF8
+# Read and base64-encode markdown files (normalize line endings first)
+$tutorial = (Get-Content (Join-Path $scriptDir "tutorial.md") -Raw) -replace "`r`n", "`n"
+$commands = (Get-Content (Join-Path $scriptDir "git-commands.md") -Raw) -replace "`r`n", "`n"
 
-foreach ($entry in $mdMap.GetEnumerator()) {
-    $id = $entry.Key
-    $mdFile = $entry.Value
-    $mdContent = Get-Content $mdFile -Raw -Encoding UTF8
+$b64Tutorial = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($tutorial))
+$b64Commands = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($commands))
 
-    # Pattern: everything between <script type="text/markdown" id="ID"> and </script>
-    $pattern = "(?s)(<script type=`"text/markdown`" id=`"$id`">)(.*?)(</script>)"
-    
-    if ($html -match $pattern) {
-        $html = $html -replace $pattern, "`${1}`n$mdContent`n`${3}"
-        Write-Host "  Synced: $($entry.Value | Split-Path -Leaf) -> #$id" -ForegroundColor Green
-    } else {
-        Write-Host "  WARNING: Could not find embedded block #$id in guide.html" -ForegroundColor Yellow
-    }
-}
+# Read marked.js and template
+$markedJs = (Get-Content $markedFile -Raw) -replace "`r`n", "`n"
+$template = (Get-Content $templateFile -Raw) -replace "`r`n", "`n"
 
-# Write updated guide.html
-Set-Content -Path $guideFile -Value $html -Encoding UTF8 -NoNewline
+# Replace placeholders in template
+$output = $template
+$output = $output.Replace('/* %%MARKED_JS%% */', $markedJs)
+$output = $output.Replace('%%TUTORIAL_B64%%', $b64Tutorial)
+$output = $output.Replace('%%COMMANDS_B64%%', $b64Commands)
+
+# Write guide.html
+[System.IO.File]::WriteAllText($guideFile, $output, [System.Text.UTF8Encoding]::new($false))
+
+$size = [math]::Round((Get-Item $guideFile).Length / 1024)
 Write-Host ""
-Write-Host "guide.html updated! Refresh your browser to see changes." -ForegroundColor Cyan
+Write-Host "  Built guide.html (${size} KB)" -ForegroundColor Green
+Write-Host "  Tutorial: $($tutorial.Length) chars -> $($b64Tutorial.Length) base64" -ForegroundColor DarkGray
+Write-Host "  Commands: $($commands.Length) chars -> $($b64Commands.Length) base64" -ForegroundColor DarkGray
+Write-Host ""
+Write-Host "  Refresh your browser to see changes." -ForegroundColor Cyan

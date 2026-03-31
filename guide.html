@@ -493,1434 +493,94 @@
 
     <button id="scroll-top" title="Back to top">↑</button>
 
-    <!-- marked.js — local copy for offline use -->
-    <script src="marked.min.js"></script>
-
-    <script type="text/markdown" id="embedded-tutorial">
-# Git & GitHub — Step-by-Step Tutorial
-
-> Everything you need to go from zero to managing code on GitHub.
-> Follow each step exactly as written. Commands are shown in `code blocks`.
-
----
-
-## Prerequisites
-
-Before you begin, install these two tools on your Windows machine:
-
-### Install Git
-
-```
-winget install --id Git.Git -e
-```
-
-### Install GitHub CLI
-
-```
-winget install --id GitHub.cli -e
-```
-
-After installing, **close and reopen your terminal** so the new commands are available.
-
-### Verify Installation
-
-```
-git --version
-gh --version
-```
-
-You should see version numbers for both tools. If not, restart your terminal.
-
----
-
-## Part 1 — Create a New Repository
-
-### Step 1: Authenticate with GitHub
-
-This connects your terminal to your GitHub account. You only need to do this once.
-
-```
-gh auth login -p https -w
-```
-
-**What happens:**
-1. The terminal shows a one-time code (e.g., `A1B2-C3D4`)
-2. Your browser opens to `https://github.com/login/device`
-3. Enter the code in the browser
-4. Click "Authorize" to approve
-
-**Verify it worked:**
-
-```
-gh auth status
-```
-
-You should see: `Logged in to github.com as YOUR_USERNAME`
-
-### Step 2: Configure Your Git Identity
-
-Git needs to know your name and email for commits. Set this once globally:
-
-```
-git config --global user.name "Your Full Name"
-git config --global user.email "your.email@example.com"
-```
-
-**Verify:**
-
-```
-git config --global user.name
-git config --global user.email
-```
-
-### Step 3: Create Your Project Folder
-
-Pick a location and create a new folder for your project:
-
-```
-mkdir my-website
-cd my-website
-```
-
-### Step 4: Create Your Website Files
-
-Create these three files inside the `my-website` folder:
-
-**index.html:**
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>Welcome to My Website</h1>
-    </header>
-    <main>
-        <p>Hello! This is my first website managed with Git and GitHub.</p>
-    </main>
-    <script src="script.js"></script>
-</body>
-</html>
-```
-
-**style.css:**
-
-```css
-body {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-header {
-    background: #0366d6;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-}
-```
-
-**script.js:**
-
-```javascript
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Website loaded successfully!');
-});
-```
-
-### Step 5: Initialize a Git Repository
-
-This tells Git to start tracking changes in this folder:
-
-```
-git init
-```
-
-**What happens:** Git creates a hidden `.git` folder that stores all version history.
-
-### Step 6: Stage and Commit Your Files
-
-**Staging** = selecting which files to include in your next snapshot.
-**Committing** = saving that snapshot with a description.
-
-```
-git add .
-git commit -m "Initial commit: simple website with HTML, CSS, and JS"
-```
-
-- `git add .` — stages ALL files in the current folder
-- `git commit -m "message"` — saves the snapshot with your message
-
-### Step 7: Create a GitHub Repository and Push
-
-This single command creates a repo on GitHub AND uploads your code:
-
-```
-gh repo create my-website --public --source=. --push
-```
-
-**What each flag means:**
-- `my-website` — the name of your new GitHub repo
-- `--public` — anyone can see it (use `--private` for private)
-- `--source=.` — use the current folder as the source
-- `--push` — immediately upload your commits
-
-**After this, your code is live at:** `https://github.com/YOUR_USERNAME/my-website`
-
----
-
-## Part 2 — Make Changes Using a Pull Request
-
-Pull Requests (PRs) are how teams review and approve changes before merging them into the main codebase. Even for solo projects, they're a good habit.
-
-### Step 8: Create a Feature Branch
-
-A **branch** is a separate line of development. The `main` or `master` branch is your stable code. Feature branches are where you experiment.
-
-```
-git checkout -b add-dark-mode
-```
-
-**What this does:**
-- Creates a new branch called `add-dark-mode`
-- Switches you to that branch immediately
-
-**Verify which branch you're on:**
-
-```
-git branch
-```
-
-The `*` shows your current branch.
-
-### Step 9: Make Your Changes
-
-Edit your files. For example, add a dark mode button to `index.html`, add dark mode CSS to `style.css`, and add toggle logic to `script.js`.
-
-The key thing: make your changes while on the feature branch, not on `main`/`master`.
-
-### Step 10: Commit and Push Your Branch
-
-```
-git add .
-git commit -m "Add dark mode toggle feature"
-git push -u origin add-dark-mode
-```
-
-- `git push -u origin add-dark-mode` — uploads your branch to GitHub
-- `-u` sets up tracking so future `git push` commands know where to go
-
-### Step 11: Open a Pull Request
-
-```
-gh pr create --title "Add dark mode toggle" --body "Adds a dark mode button that toggles between light and dark themes."
-```
-
-**What happens:**
-- A PR is created on GitHub
-- The terminal shows the PR URL (e.g., `https://github.com/YOU/my-website/pull/1`)
-- You (or a teammate) can review the changes on GitHub before merging
-
-### Step 12: Merge the Pull Request
-
-Once you're happy with the changes:
-
-```
-gh pr merge 1 --merge --delete-branch
-```
-
-**What each flag means:**
-- `1` — the PR number
-- `--merge` — use a merge commit (keeps history)
-- `--delete-branch` — deletes the feature branch after merging (cleanup)
-
-**What happens:**
-- Your changes are merged into `master`/`main`
-- The `add-dark-mode` branch is deleted (both locally and on GitHub)
-- You're switched back to the `master` branch automatically
-
----
-
-## Part 3 — Work with Existing Repositories
-
-### Step 13: List All Your GitHub Repositories
-
-```
-gh repo list
-```
-
-This shows all repos in your GitHub account with their names, visibility (public/private), and last update time.
-
-### Step 14: Clone a Repository
-
-**Cloning** = downloading a GitHub repo to your local machine.
-
-```
-gh repo clone YOUR_USERNAME/REPO_NAME
-```
-
-For example:
-
-```
-gh repo clone snchande/testgit
-cd testgit
-```
-
-**What happens:**
-- Downloads all the code and full history
-- Sets up `origin` as the remote pointing to GitHub
-- You're ready to work
-
-### Step 15: Create a Branch and Make Changes
-
-Same workflow as before:
-
-```
-git checkout -b update-homepage
-```
-
-Edit your files, then:
-
-```
-git add .
-git commit -m "Modernize homepage with proper HTML5 structure"
-git push -u origin update-homepage
-```
-
-### Step 16: Create and Merge the PR
-
-```
-gh pr create --title "Modernize homepage" --body "Updates index.html with proper HTML5 structure."
-gh pr merge 1 --merge --delete-branch
-```
-
-### Step 17: Clean Up the Local Clone
-
-Once you're done and the PR is merged, your code is safe on GitHub. You can delete the local folder:
-
-**Verify GitHub is in sync first:**
-
-```
-git log --oneline -3
-```
-
-**Then delete the local clone (Windows PowerShell):**
-
-```
-cd ..
-Remove-Item -Recurse -Force .\testgit
-```
-
-> ⚠️ **Important:** This only deletes the folder on YOUR computer. The repository and all its history remain safe on GitHub. You can always clone it again later.
-
----
-
-## Quick Reference — The Full Workflow
-
-```
-# ONE-TIME SETUP
-gh auth login -p https -w
-git config --global user.name "Your Name"
-git config --global user.email "your@email.com"
-
-# CREATE A NEW REPO
-mkdir my-project && cd my-project
-git init
-# ... create your files ...
-git add .
-git commit -m "Initial commit"
-gh repo create my-project --public --source=. --push
-
-# MAKE CHANGES VIA PR
-git checkout -b feature-name
-# ... edit files ...
-git add .
-git commit -m "Describe your changes"
-git push -u origin feature-name
-gh pr create --title "Title" --body "Description"
-gh pr merge NUMBER --merge --delete-branch
-
-# WORK WITH EXISTING REPO
-gh repo list
-gh repo clone USERNAME/REPO
-cd REPO
-git checkout -b branch-name
-# ... edit files ...
-git add . && git commit -m "Changes" && git push -u origin branch-name
-gh pr create --title "Title" --body "Description"
-gh pr merge NUMBER --merge --delete-branch
-
-# CLEANUP
-cd ..
-Remove-Item -Recurse -Force .\REPO
-```
-
----
-
-## Glossary
-
-| Term | Meaning |
-|------|---------|
-| **Repository (Repo)** | A folder tracked by Git, containing your code and its full history |
-| **Commit** | A saved snapshot of your code at a point in time |
-| **Branch** | A separate line of development (like a parallel universe for your code) |
-| **Main / Master** | The default, stable branch |
-| **Remote** | The copy of your repo on GitHub (called `origin`) |
-| **Clone** | Download a GitHub repo to your local machine |
-| **Push** | Upload your local commits to GitHub |
-| **Pull** | Download the latest changes from GitHub to your local machine |
-| **Pull Request (PR)** | A request to merge your branch into the main branch, with review |
-| **Merge** | Combine changes from one branch into another |
-| **Stage (git add)** | Select files to include in your next commit |
-| **HEAD** | A pointer to your current commit/branch |
-
-</script>
-
-    <script type="text/markdown" id="embedded-commands">
-# Advanced Git Commands Reference
-
-A comprehensive reference for Git and GitHub CLI power users.
-
----
-
-## Table of Contents
-
-- [Configuration](#configuration)
-- [Repository Management](#repository-management)
-- [Branching & Switching](#branching--switching)
-- [Staging & Committing](#staging--committing)
-- [Viewing History & Diffs](#viewing-history--diffs)
-- [Remote Operations](#remote-operations)
-- [Merging & Rebasing](#merging--rebasing)
-- [Stashing](#stashing)
-- [Tagging & Releases](#tagging--releases)
-- [Undoing Changes](#undoing-changes)
-- [Cherry-Pick](#cherry-pick)
-- [Searching & Debugging](#searching--debugging)
-- [Submodules](#submodules)
-- [GitHub CLI (gh) Commands](#github-cli-gh-commands)
-- [Git Aliases](#git-aliases)
-- [Tips & Best Practices](#tips--best-practices)
-
----
-
-## Configuration
-
-### Global Settings
-
-```bash
-# Set your identity
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-
-# Set default branch name for new repos
-git config --global init.defaultBranch main
-
-# Set default editor (e.g., VS Code)
-git config --global core.editor "code --wait"
-
-# Enable colored output
-git config --global color.ui auto
-
-# Set line ending behavior (Windows)
-git config --global core.autocrlf true
-
-# Set line ending behavior (Mac/Linux)
-git config --global core.autocrlf input
-```
-
-### View All Settings
-
-```bash
-# List all config values and where they come from
-git config --list --show-origin
-
-# Check a specific value
-git config user.name
-```
-
-### Per-Repository Settings
-
-```bash
-# Override global settings for one repo
-git config user.name "Work Name"
-git config user.email "work@company.com"
-```
-
----
-
-## Repository Management
-
-### Create & Initialize
-
-```bash
-# Initialize a new repo in current directory
-git init
-
-# Initialize with a specific default branch name
-git init -b main
-
-# Clone a repo (HTTPS)
-git clone https://github.com/user/repo.git
-
-# Clone a specific branch only
-git clone -b develop --single-branch https://github.com/user/repo.git
-
-# Clone with limited history (faster for large repos)
-git clone --depth 1 https://github.com/user/repo.git
-
-# Clone into a specific folder name
-git clone https://github.com/user/repo.git my-folder
-```
-
-### .gitignore
-
-Create a `.gitignore` file to tell Git which files to skip:
-
-```
-# Dependencies
-node_modules/
-vendor/
-
-# Build output
-dist/
-build/
-*.exe
-*.dll
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Environment files (NEVER commit secrets!)
-.env
-.env.local
-*.key
-*.pem
-```
-
----
-
-## Branching & Switching
-
-### Creating Branches
-
-```bash
-# Create a new branch
-git branch feature-login
-
-# Create AND switch to it
-git checkout -b feature-login
-
-# Modern alternative (Git 2.23+)
-git switch -c feature-login
-
-# Create a branch from a specific commit
-git checkout -b hotfix abc1234
-
-# Create a branch from a remote branch
-git checkout -b local-name origin/remote-branch
-```
-
-### Listing Branches
-
-```bash
-# List local branches (* = current)
-git branch
-
-# List remote branches
-git branch -r
-
-# List ALL branches (local + remote)
-git branch -a
-
-# List branches with last commit info
-git branch -v
-
-# List merged branches (safe to delete)
-git branch --merged
-
-# List unmerged branches (NOT safe to delete)
-git branch --no-merged
-```
-
-### Switching Branches
-
-```bash
-# Switch to an existing branch
-git checkout main
-git switch main          # modern alternative
-
-# Switch to previous branch (like cd -)
-git checkout -
-git switch -             # modern alternative
-```
-
-### Deleting Branches
-
-```bash
-# Delete a merged branch
-git branch -d feature-login
-
-# Force delete an unmerged branch (CAREFUL: loses unmerged work)
-git branch -D feature-login
-
-# Delete a remote branch
-git push origin --delete feature-login
-```
-
-### Renaming Branches
-
-```bash
-# Rename current branch
-git branch -m new-name
-
-# Rename a specific branch
-git branch -m old-name new-name
-```
-
----
-
-## Staging & Committing
-
-### Staging Files
-
-```bash
-# Stage a specific file
-git add index.html
-
-# Stage multiple specific files
-git add index.html style.css script.js
-
-# Stage all changes in current directory and subdirectories
-git add .
-
-# Stage all changes in the entire repo
-git add -A
-
-# Stage parts of a file interactively (choose which hunks to add)
-git add -p filename.txt
-
-# Unstage a file (keep changes, just remove from staging)
-git restore --staged filename.txt
-```
-
-### Committing
-
-```bash
-# Commit with a message
-git commit -m "Add login page"
-
-# Commit with a multi-line message
-git commit -m "Add login page" -m "Includes form validation and error handling"
-
-# Stage all tracked files AND commit in one step
-git commit -am "Fix typo in header"
-
-# Amend the last commit (change message or add forgotten files)
-git add forgotten-file.txt
-git commit --amend -m "Updated commit message"
-
-# Amend without changing the message
-git commit --amend --no-edit
-
-# Create an empty commit (useful for triggering CI/CD)
-git commit --allow-empty -m "Trigger rebuild"
-```
-
-### Commit Message Best Practices
-
-```
-type: short description (50 chars or less)
-
-Longer explanation if needed. Wrap at 72 characters.
-Explain WHAT and WHY, not HOW (the code shows how).
-
-Common types:
-  feat:     A new feature
-  fix:      A bug fix
-  docs:     Documentation changes
-  style:    Formatting (no code change)
-  refactor: Code restructuring (no behavior change)
-  test:     Adding or updating tests
-  chore:    Maintenance tasks
-```
-
----
-
-## Viewing History & Diffs
-
-### Log / History
-
-```bash
-# Basic log
-git log
-
-# Compact one-line format
-git log --oneline
-
-# Show last N commits
-git log --oneline -10
-
-# Show a visual branch graph
-git log --oneline --graph --all
-
-# Show commits by a specific author
-git log --author="Suresh"
-
-# Show commits in a date range
-git log --after="2026-01-01" --before="2026-03-31"
-
-# Show commits that changed a specific file
-git log -- filename.txt
-
-# Search commit messages
-git log --grep="login"
-
-# Show stats (files changed, insertions, deletions)
-git log --stat
-
-# Show full patch (actual code changes)
-git log -p
-```
-
-### Diff (See Changes)
-
-```bash
-# See unstaged changes (working directory vs staged)
-git diff
-
-# See staged changes (staged vs last commit)
-git diff --staged
-
-# Compare two branches
-git diff main..feature-branch
-
-# Compare a specific file between branches
-git diff main..feature-branch -- index.html
-
-# See only file names that changed
-git diff --name-only
-
-# See a summary of changes
-git diff --stat
-
-# Compare with a specific commit
-git diff abc1234
-
-# Compare two commits
-git diff abc1234..def5678
-```
-
-### Show Specific Commits
-
-```bash
-# Show details of a specific commit
-git show abc1234
-
-# Show a file at a specific commit
-git show abc1234:index.html
-
-# Show what changed in the last commit
-git show HEAD
-
-# Show who changed each line of a file (blame)
-git blame filename.txt
-
-# Blame a specific range of lines
-git blame -L 10,20 filename.txt
-```
-
----
-
-## Remote Operations
-
-### Managing Remotes
-
-```bash
-# List remotes
-git remote -v
-
-# Add a remote
-git remote add upstream https://github.com/original/repo.git
-
-# Remove a remote
-git remote remove upstream
-
-# Rename a remote
-git remote rename origin github
-
-# Show detailed info about a remote
-git remote show origin
-```
-
-### Push
-
-```bash
-# Push current branch
-git push
-
-# Push and set upstream tracking
-git push -u origin feature-branch
-
-# Push all branches
-git push --all
-
-# Push tags
-git push --tags
-
-# Force push (DANGER: overwrites remote history)
-git push --force
-
-# Safer force push (fails if someone else pushed)
-git push --force-with-lease
-```
-
-### Pull & Fetch
-
-```bash
-# Pull (fetch + merge)
-git pull
-
-# Pull with rebase instead of merge (cleaner history)
-git pull --rebase
-
-# Fetch only (download changes but don't merge)
-git fetch
-
-# Fetch from all remotes
-git fetch --all
-
-# Fetch and prune deleted remote branches
-git fetch --prune
-
-# Pull a specific branch
-git pull origin main
-```
-
----
-
-## Merging & Rebasing
-
-### Merge
-
-```bash
-# Merge a branch into current branch
-git merge feature-branch
-
-# Merge with a commit message
-git merge feature-branch -m "Merge feature-branch into main"
-
-# Merge without fast-forward (always create a merge commit)
-git merge --no-ff feature-branch
-
-# Abort a merge in progress (if there are conflicts)
-git merge --abort
-
-# See merge conflicts
-git diff --name-only --diff-filter=U
-```
-
-### Resolving Merge Conflicts
-
-When Git can't auto-merge, it marks conflicts in files like this:
-
-```
-<<<<<<< HEAD
-Your changes on the current branch
-=======
-Changes from the branch being merged
->>>>>>> feature-branch
-```
-
-**Steps to resolve:**
-1. Open the conflicted file
-2. Choose which changes to keep (or combine them)
-3. Remove the `<<<<<<<`, `=======`, `>>>>>>>` markers
-4. Stage the resolved file: `git add filename.txt`
-5. Complete the merge: `git commit`
-
-### Rebase
-
-Rebase replays your commits on top of another branch (cleaner linear history):
-
-```bash
-# Rebase current branch onto main
-git rebase main
-
-# Interactive rebase (edit, squash, reorder commits)
-git rebase -i HEAD~3
-
-# Abort a rebase in progress
-git rebase --abort
-
-# Continue after resolving conflicts
-git rebase --continue
-
-# Skip a problematic commit during rebase
-git rebase --skip
-```
-
-### Interactive Rebase Options
-
-When you run `git rebase -i HEAD~3`, an editor opens with:
-
-```
-pick abc1234 First commit message
-pick def5678 Second commit message
-pick ghi9012 Third commit message
-```
-
-Change `pick` to:
-- `reword` (r) — Change the commit message
-- `edit` (e) — Stop to amend the commit
-- `squash` (s) — Combine with previous commit (keep message)
-- `fixup` (f) — Combine with previous commit (discard message)
-- `drop` (d) — Remove the commit entirely
-
-> ⚠️ **Golden Rule:** Never rebase commits that have been pushed and shared with others.
-
----
-
-## Stashing
-
-Stash saves your uncommitted changes temporarily so you can switch branches.
-
-```bash
-# Stash current changes
-git stash
-
-# Stash with a description
-git stash save "work in progress on login form"
-
-# Stash including untracked files
-git stash -u
-
-# List all stashes
-git stash list
-
-# Apply the most recent stash (keeps it in stash list)
-git stash apply
-
-# Apply AND remove from stash list
-git stash pop
-
-# Apply a specific stash
-git stash apply stash@{2}
-
-# See what's in a stash
-git stash show stash@{0}
-
-# See the full diff of a stash
-git stash show -p stash@{0}
-
-# Drop a specific stash
-git stash drop stash@{0}
-
-# Clear all stashes (CAREFUL!)
-git stash clear
-```
-
----
-
-## Tagging & Releases
-
-Tags mark specific points in history (usually releases).
-
-```bash
-# Create a lightweight tag
-git tag v1.0.0
-
-# Create an annotated tag (recommended — includes message)
-git tag -a v1.0.0 -m "Version 1.0.0 release"
-
-# Tag a specific commit
-git tag -a v1.0.0 abc1234 -m "Version 1.0.0"
-
-# List all tags
-git tag
-
-# List tags matching a pattern
-git tag -l "v1.*"
-
-# Show tag details
-git show v1.0.0
-
-# Push a tag to remote
-git push origin v1.0.0
-
-# Push all tags
-git push --tags
-
-# Delete a local tag
-git tag -d v1.0.0
-
-# Delete a remote tag
-git push origin --delete v1.0.0
-```
-
-### GitHub Releases (via gh CLI)
-
-```bash
-# Create a release from a tag
-gh release create v1.0.0 --title "Version 1.0.0" --notes "First stable release"
-
-# Create a release with auto-generated notes
-gh release create v1.0.0 --generate-notes
-
-# List releases
-gh release list
-
-# Download release assets
-gh release download v1.0.0
-```
-
----
-
-## Undoing Changes
-
-### Discard Working Directory Changes
-
-```bash
-# Discard changes in a specific file
-git restore filename.txt
-git checkout -- filename.txt        # older syntax
-
-# Discard ALL uncommitted changes (CAREFUL!)
-git restore .
-git checkout -- .                   # older syntax
-```
-
-### Unstage Files
-
-```bash
-# Unstage a file (keep the changes, just un-add)
-git restore --staged filename.txt
-git reset HEAD filename.txt         # older syntax
-```
-
-### Undo Commits
-
-```bash
-# Undo last commit, keep changes staged
-git reset --soft HEAD~1
-
-# Undo last commit, keep changes unstaged
-git reset HEAD~1
-git reset --mixed HEAD~1            # same thing (mixed is default)
-
-# Undo last commit, DISCARD all changes (DANGER!)
-git reset --hard HEAD~1
-
-# Undo a specific commit by creating a NEW commit that reverses it
-# (safe for shared branches — doesn't rewrite history)
-git revert abc1234
-
-# Revert the last commit
-git revert HEAD
-```
-
-### Recover Deleted Commits
-
-```bash
-# Show ALL recent HEAD movements (including deleted commits)
-git reflog
-
-# Restore to a specific point from reflog
-git reset --hard HEAD@{2}
-
-# Create a branch from a "lost" commit
-git checkout -b recovery-branch abc1234
-```
-
----
-
-## Cherry-Pick
-
-Apply a specific commit from one branch to another:
-
-```bash
-# Apply a commit to current branch
-git cherry-pick abc1234
-
-# Cherry-pick without committing (stage only)
-git cherry-pick --no-commit abc1234
-
-# Cherry-pick a range of commits
-git cherry-pick abc1234..def5678
-
-# Abort a cherry-pick
-git cherry-pick --abort
-```
-
----
-
-## Searching & Debugging
-
-```bash
-# Search file contents across the repo
-git grep "search term"
-
-# Search with line numbers
-git grep -n "TODO"
-
-# Search in a specific branch or commit
-git grep "bug" main
-
-# Find which commit introduced a bug (binary search)
-git bisect start
-git bisect bad              # current commit is bad
-git bisect good abc1234     # this old commit was good
-# Git checks out a middle commit — test it, then:
-git bisect good             # or git bisect bad
-# Repeat until Git finds the exact bad commit
-git bisect reset            # done, go back to normal
-```
-
----
-
-## Submodules
-
-Include other Git repos inside your repo:
-
-```bash
-# Add a submodule
-git submodule add https://github.com/user/library.git libs/library
-
-# Clone a repo WITH its submodules
-git clone --recurse-submodules https://github.com/user/repo.git
-
-# Initialize submodules after cloning
-git submodule init
-git submodule update
-
-# Update all submodules to latest
-git submodule update --remote
-
-# Remove a submodule
-git submodule deinit libs/library
-git rm libs/library
-```
-
----
-
-## GitHub CLI (gh) Commands
-
-### Repository Operations
-
-```bash
-# Create a new repo
-gh repo create my-app --public --source=. --push
-gh repo create my-app --private --clone
-
-# List your repos
-gh repo list
-gh repo list --limit 50
-
-# View repo in browser
-gh repo view --web
-
-# Fork a repo
-gh repo fork owner/repo --clone
-
-# Archive a repo
-gh repo archive owner/repo
-
-# Delete a repo (CAREFUL!)
-gh repo delete owner/repo --yes
-```
-
-### Pull Request Operations
-
-```bash
-# Create a PR
-gh pr create --title "Title" --body "Description"
-
-# Create a PR with reviewers
-gh pr create --title "Title" --reviewer user1,user2
-
-# Create a draft PR
-gh pr create --title "Title" --draft
-
-# List open PRs
-gh pr list
-
-# View PR details
-gh pr view 1
-
-# View PR in browser
-gh pr view 1 --web
-
-# Check out a PR locally (for testing)
-gh pr checkout 1
-
-# Review a PR
-gh pr review 1 --approve
-gh pr review 1 --request-changes --body "Please fix X"
-
-# Merge a PR
-gh pr merge 1 --merge --delete-branch
-gh pr merge 1 --squash --delete-branch
-gh pr merge 1 --rebase --delete-branch
-
-# Close a PR without merging
-gh pr close 1
-```
-
-### Issue Operations
-
-```bash
-# Create an issue
-gh issue create --title "Bug: login fails" --body "Steps to reproduce..."
-
-# List issues
-gh issue list
-
-# View an issue
-gh issue view 1
-
-# Close an issue
-gh issue close 1
-
-# Reopen an issue
-gh issue reopen 1
-
-# Add labels
-gh issue edit 1 --add-label "bug,urgent"
-```
-
-### Workflow / Actions
-
-```bash
-# List workflows
-gh workflow list
-
-# View workflow runs
-gh run list
-
-# Watch a running workflow
-gh run watch
-
-# View run details
-gh run view 12345
-
-# Re-run a failed workflow
-gh run rerun 12345
-
-# Download workflow artifacts
-gh run download 12345
-```
-
-### Gists
-
-```bash
-# Create a gist from a file
-gh gist create filename.txt
-
-# Create a public gist
-gh gist create filename.txt --public
-
-# List your gists
-gh gist list
-```
-
----
-
-## Git Aliases
-
-Save time with shortcuts. Add these to your config:
-
-```bash
-# Set up aliases
-git config --global alias.st status
-git config --global alias.co checkout
-git config --global alias.br branch
-git config --global alias.ci commit
-git config --global alias.unstage "restore --staged"
-git config --global alias.last "log -1 HEAD"
-git config --global alias.visual "log --oneline --graph --all"
-git config --global alias.amend "commit --amend --no-edit"
-```
-
-**Usage after setting aliases:**
-
-```bash
-git st                  # instead of: git status
-git co main             # instead of: git checkout main
-git br -a               # instead of: git branch -a
-git ci -m "message"     # instead of: git commit -m "message"
-git unstage file.txt    # instead of: git restore --staged file.txt
-git last                # instead of: git log -1 HEAD
-git visual              # instead of: git log --oneline --graph --all
-git amend               # instead of: git commit --amend --no-edit
-```
-
----
-
-## Tips & Best Practices
-
-### Commit Often, Push Regularly
-- Make small, focused commits (one logical change per commit)
-- Push at the end of each work session
-
-### Branch Naming Conventions
-```
-feature/login-page
-bugfix/header-overlap
-hotfix/security-patch
-docs/api-reference
-chore/update-dependencies
-```
-
-### Protect Your Main Branch
-- Never commit directly to `main` — always use PRs
-- Enable branch protection rules on GitHub
-
-### Keep History Clean
-- Use `git pull --rebase` to avoid unnecessary merge commits
-- Squash small fix commits before merging PRs
-
-### Security
-- **NEVER commit secrets** (passwords, API keys, tokens)
-- Use `.gitignore` to exclude sensitive files
-- Use `.env` files for secrets (and add `.env` to `.gitignore`)
-- If you accidentally commit a secret, consider it compromised — rotate it immediately
-
-### Useful Status Checks
-
-```bash
-# Full status
-git status
-
-# Short status
-git status -s
-
-# See which remote branches your local branches track
-git branch -vv
-
-# Check if you're up to date with remote
-git fetch && git status
-```
-
-</script>
+    <script>
+    /**
+ * marked v14.0.0 - a markdown parser
+ * Copyright (c) 2011-2024, Christopher Jeffrey. (MIT Licensed)
+ * https://github.com/markedjs/marked
+ */
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).marked={})}(this,(function(e){"use strict";function t(){return{async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null}}function n(t){e.defaults=t}e.defaults={async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null};const s=/[&<>"']/,r=new RegExp(s.source,"g"),i=/[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/,l=new RegExp(i.source,"g"),o={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"},a=e=>o[e];function c(e,t){if(t){if(s.test(e))return e.replace(r,a)}else if(i.test(e))return e.replace(l,a);return e}const h=/(^|[^\[])\^/g;function p(e,t){let n="string"==typeof e?e:e.source;t=t||"";const s={replace:(e,t)=>{let r="string"==typeof t?t:t.source;return r=r.replace(h,"$1"),n=n.replace(e,r),s},getRegex:()=>new RegExp(n,t)};return s}function u(e){try{e=encodeURI(e).replace(/%25/g,"%")}catch{return null}return e}const k={exec:()=>null};function g(e,t){const n=e.replace(/\|/g,((e,t,n)=>{let s=!1,r=t;for(;--r>=0&&"\\"===n[r];)s=!s;return s?"|":" |"})).split(/ \|/);let s=0;if(n[0].trim()||n.shift(),n.length>0&&!n[n.length-1].trim()&&n.pop(),t)if(n.length>t)n.splice(t);else for(;n.length<t;)n.push("");for(;s<n.length;s++)n[s]=n[s].trim().replace(/\\\|/g,"|");return n}function f(e,t,n){const s=e.length;if(0===s)return"";let r=0;for(;r<s;){const i=e.charAt(s-r-1);if(i!==t||n){if(i===t||!n)break;r++}else r++}return e.slice(0,s-r)}function d(e,t,n,s){const r=t.href,i=t.title?c(t.title):null,l=e[1].replace(/\\([\[\]])/g,"$1");if("!"!==e[0].charAt(0)){s.state.inLink=!0;const e={type:"link",raw:n,href:r,title:i,text:l,tokens:s.inlineTokens(l)};return s.state.inLink=!1,e}return{type:"image",raw:n,href:r,title:i,text:c(l)}}class x{options;rules;lexer;constructor(t){this.options=t||e.defaults}space(e){const t=this.rules.block.newline.exec(e);if(t&&t[0].length>0)return{type:"space",raw:t[0]}}code(e){const t=this.rules.block.code.exec(e);if(t){const e=t[0].replace(/^ {1,4}/gm,"");return{type:"code",raw:t[0],codeBlockStyle:"indented",text:this.options.pedantic?e:f(e,"\n")}}}fences(e){const t=this.rules.block.fences.exec(e);if(t){const e=t[0],n=function(e,t){const n=e.match(/^(\s+)(?:```)/);if(null===n)return t;const s=n[1];return t.split("\n").map((e=>{const t=e.match(/^\s+/);if(null===t)return e;const[n]=t;return n.length>=s.length?e.slice(s.length):e})).join("\n")}(e,t[3]||"");return{type:"code",raw:e,lang:t[2]?t[2].trim().replace(this.rules.inline.anyPunctuation,"$1"):t[2],text:n}}}heading(e){const t=this.rules.block.heading.exec(e);if(t){let e=t[2].trim();if(/#$/.test(e)){const t=f(e,"#");this.options.pedantic?e=t.trim():t&&!/ $/.test(t)||(e=t.trim())}return{type:"heading",raw:t[0],depth:t[1].length,text:e,tokens:this.lexer.inline(e)}}}hr(e){const t=this.rules.block.hr.exec(e);if(t)return{type:"hr",raw:f(t[0],"\n")}}blockquote(e){const t=this.rules.block.blockquote.exec(e);if(t){let e=f(t[0],"\n").split("\n"),n="",s="";const r=[];for(;e.length>0;){let t=!1;const i=[];let l;for(l=0;l<e.length;l++)if(/^ {0,3}>/.test(e[l]))i.push(e[l]),t=!0;else{if(t)break;i.push(e[l])}e=e.slice(l);const o=i.join("\n"),a=o.replace(/\n {0,3}((?:=+|-+) *)(?=\n|$)/g,"\n    $1").replace(/^ {0,3}>[ \t]?/gm,"");n=n?`${n}\n${o}`:o,s=s?`${s}\n${a}`:a;const c=this.lexer.state.top;if(this.lexer.state.top=!0,this.lexer.blockTokens(a,r,!0),this.lexer.state.top=c,0===e.length)break;const h=r[r.length-1];if("code"===h?.type)break;if("blockquote"===h?.type){const t=h,i=t.raw+"\n"+e.join("\n"),l=this.blockquote(i);r[r.length-1]=l,n=n.substring(0,n.length-t.raw.length)+l.raw,s=s.substring(0,s.length-t.text.length)+l.text;break}if("list"!==h?.type);else{const t=h,i=t.raw+"\n"+e.join("\n"),l=this.list(i);r[r.length-1]=l,n=n.substring(0,n.length-h.raw.length)+l.raw,s=s.substring(0,s.length-t.raw.length)+l.raw,e=i.substring(r[r.length-1].raw.length).split("\n")}}return{type:"blockquote",raw:n,tokens:r,text:s}}}list(e){let t=this.rules.block.list.exec(e);if(t){let n=t[1].trim();const s=n.length>1,r={type:"list",raw:"",ordered:s,start:s?+n.slice(0,-1):"",loose:!1,items:[]};n=s?`\\d{1,9}\\${n.slice(-1)}`:`\\${n}`,this.options.pedantic&&(n=s?n:"[*+-]");const i=new RegExp(`^( {0,3}${n})((?:[\t ][^\\n]*)?(?:\\n|$))`);let l=!1;for(;e;){let n=!1,s="",o="";if(!(t=i.exec(e)))break;if(this.rules.block.hr.test(e))break;s=t[0],e=e.substring(s.length);let a=t[2].split("\n",1)[0].replace(/^\t+/,(e=>" ".repeat(3*e.length))),c=e.split("\n",1)[0],h=!a.trim(),p=0;if(this.options.pedantic?(p=2,o=a.trimStart()):h?p=t[1].length+1:(p=t[2].search(/[^ ]/),p=p>4?1:p,o=a.slice(p),p+=t[1].length),h&&/^ *$/.test(c)&&(s+=c+"\n",e=e.substring(c.length+1),n=!0),!n){const t=new RegExp(`^ {0,${Math.min(3,p-1)}}(?:[*+-]|\\d{1,9}[.)])((?:[ \t][^\\n]*)?(?:\\n|$))`),n=new RegExp(`^ {0,${Math.min(3,p-1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`),r=new RegExp(`^ {0,${Math.min(3,p-1)}}(?:\`\`\`|~~~)`),i=new RegExp(`^ {0,${Math.min(3,p-1)}}#`);for(;e;){const l=e.split("\n",1)[0];if(c=l,this.options.pedantic&&(c=c.replace(/^ {1,4}(?=( {4})*[^ ])/g,"  ")),r.test(c))break;if(i.test(c))break;if(t.test(c))break;if(n.test(e))break;if(c.search(/[^ ]/)>=p||!c.trim())o+="\n"+c.slice(p);else{if(h)break;if(a.search(/[^ ]/)>=4)break;if(r.test(a))break;if(i.test(a))break;if(n.test(a))break;o+="\n"+c}h||c.trim()||(h=!0),s+=l+"\n",e=e.substring(l.length+1),a=c.slice(p)}}r.loose||(l?r.loose=!0:/\n *\n *$/.test(s)&&(l=!0));let u,k=null;this.options.gfm&&(k=/^\[[ xX]\] /.exec(o),k&&(u="[ ] "!==k[0],o=o.replace(/^\[[ xX]\] +/,""))),r.items.push({type:"list_item",raw:s,task:!!k,checked:u,loose:!1,text:o,tokens:[]}),r.raw+=s}r.items[r.items.length-1].raw=r.items[r.items.length-1].raw.trimEnd(),r.items[r.items.length-1].text=r.items[r.items.length-1].text.trimEnd(),r.raw=r.raw.trimEnd();for(let e=0;e<r.items.length;e++)if(this.lexer.state.top=!1,r.items[e].tokens=this.lexer.blockTokens(r.items[e].text,[]),!r.loose){const t=r.items[e].tokens.filter((e=>"space"===e.type)),n=t.length>0&&t.some((e=>/\n.*\n/.test(e.raw)));r.loose=n}if(r.loose)for(let e=0;e<r.items.length;e++)r.items[e].loose=!0;return r}}html(e){const t=this.rules.block.html.exec(e);if(t){return{type:"html",block:!0,raw:t[0],pre:"pre"===t[1]||"script"===t[1]||"style"===t[1],text:t[0]}}}def(e){const t=this.rules.block.def.exec(e);if(t){const e=t[1].toLowerCase().replace(/\s+/g," "),n=t[2]?t[2].replace(/^<(.*)>$/,"$1").replace(this.rules.inline.anyPunctuation,"$1"):"",s=t[3]?t[3].substring(1,t[3].length-1).replace(this.rules.inline.anyPunctuation,"$1"):t[3];return{type:"def",tag:e,raw:t[0],href:n,title:s}}}table(e){const t=this.rules.block.table.exec(e);if(!t)return;if(!/[:|]/.test(t[2]))return;const n=g(t[1]),s=t[2].replace(/^\||\| *$/g,"").split("|"),r=t[3]&&t[3].trim()?t[3].replace(/\n[ \t]*$/,"").split("\n"):[],i={type:"table",raw:t[0],header:[],align:[],rows:[]};if(n.length===s.length){for(const e of s)/^ *-+: *$/.test(e)?i.align.push("right"):/^ *:-+: *$/.test(e)?i.align.push("center"):/^ *:-+ *$/.test(e)?i.align.push("left"):i.align.push(null);for(let e=0;e<n.length;e++)i.header.push({text:n[e],tokens:this.lexer.inline(n[e]),header:!0,align:i.align[e]});for(const e of r)i.rows.push(g(e,i.header.length).map(((e,t)=>({text:e,tokens:this.lexer.inline(e),header:!1,align:i.align[t]}))));return i}}lheading(e){const t=this.rules.block.lheading.exec(e);if(t)return{type:"heading",raw:t[0],depth:"="===t[2].charAt(0)?1:2,text:t[1],tokens:this.lexer.inline(t[1])}}paragraph(e){const t=this.rules.block.paragraph.exec(e);if(t){const e="\n"===t[1].charAt(t[1].length-1)?t[1].slice(0,-1):t[1];return{type:"paragraph",raw:t[0],text:e,tokens:this.lexer.inline(e)}}}text(e){const t=this.rules.block.text.exec(e);if(t)return{type:"text",raw:t[0],text:t[0],tokens:this.lexer.inline(t[0])}}escape(e){const t=this.rules.inline.escape.exec(e);if(t)return{type:"escape",raw:t[0],text:c(t[1])}}tag(e){const t=this.rules.inline.tag.exec(e);if(t)return!this.lexer.state.inLink&&/^<a /i.test(t[0])?this.lexer.state.inLink=!0:this.lexer.state.inLink&&/^<\/a>/i.test(t[0])&&(this.lexer.state.inLink=!1),!this.lexer.state.inRawBlock&&/^<(pre|code|kbd|script)(\s|>)/i.test(t[0])?this.lexer.state.inRawBlock=!0:this.lexer.state.inRawBlock&&/^<\/(pre|code|kbd|script)(\s|>)/i.test(t[0])&&(this.lexer.state.inRawBlock=!1),{type:"html",raw:t[0],inLink:this.lexer.state.inLink,inRawBlock:this.lexer.state.inRawBlock,block:!1,text:t[0]}}link(e){const t=this.rules.inline.link.exec(e);if(t){const e=t[2].trim();if(!this.options.pedantic&&/^</.test(e)){if(!/>$/.test(e))return;const t=f(e.slice(0,-1),"\\");if((e.length-t.length)%2==0)return}else{const e=function(e,t){if(-1===e.indexOf(t[1]))return-1;let n=0;for(let s=0;s<e.length;s++)if("\\"===e[s])s++;else if(e[s]===t[0])n++;else if(e[s]===t[1]&&(n--,n<0))return s;return-1}(t[2],"()");if(e>-1){const n=(0===t[0].indexOf("!")?5:4)+t[1].length+e;t[2]=t[2].substring(0,e),t[0]=t[0].substring(0,n).trim(),t[3]=""}}let n=t[2],s="";if(this.options.pedantic){const e=/^([^'"]*[^\s])\s+(['"])(.*)\2/.exec(n);e&&(n=e[1],s=e[3])}else s=t[3]?t[3].slice(1,-1):"";return n=n.trim(),/^</.test(n)&&(n=this.options.pedantic&&!/>$/.test(e)?n.slice(1):n.slice(1,-1)),d(t,{href:n?n.replace(this.rules.inline.anyPunctuation,"$1"):n,title:s?s.replace(this.rules.inline.anyPunctuation,"$1"):s},t[0],this.lexer)}}reflink(e,t){let n;if((n=this.rules.inline.reflink.exec(e))||(n=this.rules.inline.nolink.exec(e))){const e=t[(n[2]||n[1]).replace(/\s+/g," ").toLowerCase()];if(!e){const e=n[0].charAt(0);return{type:"text",raw:e,text:e}}return d(n,e,n[0],this.lexer)}}emStrong(e,t,n=""){let s=this.rules.inline.emStrongLDelim.exec(e);if(!s)return;if(s[3]&&n.match(/[\p{L}\p{N}]/u))return;if(!(s[1]||s[2]||"")||!n||this.rules.inline.punctuation.exec(n)){const n=[...s[0]].length-1;let r,i,l=n,o=0;const a="*"===s[0][0]?this.rules.inline.emStrongRDelimAst:this.rules.inline.emStrongRDelimUnd;for(a.lastIndex=0,t=t.slice(-1*e.length+n);null!=(s=a.exec(t));){if(r=s[1]||s[2]||s[3]||s[4]||s[5]||s[6],!r)continue;if(i=[...r].length,s[3]||s[4]){l+=i;continue}if((s[5]||s[6])&&n%3&&!((n+i)%3)){o+=i;continue}if(l-=i,l>0)continue;i=Math.min(i,i+l+o);const t=[...s[0]][0].length,a=e.slice(0,n+s.index+t+i);if(Math.min(n,i)%2){const e=a.slice(1,-1);return{type:"em",raw:a,text:e,tokens:this.lexer.inlineTokens(e)}}const c=a.slice(2,-2);return{type:"strong",raw:a,text:c,tokens:this.lexer.inlineTokens(c)}}}}codespan(e){const t=this.rules.inline.code.exec(e);if(t){let e=t[2].replace(/\n/g," ");const n=/[^ ]/.test(e),s=/^ /.test(e)&&/ $/.test(e);return n&&s&&(e=e.substring(1,e.length-1)),e=c(e,!0),{type:"codespan",raw:t[0],text:e}}}br(e){const t=this.rules.inline.br.exec(e);if(t)return{type:"br",raw:t[0]}}del(e){const t=this.rules.inline.del.exec(e);if(t)return{type:"del",raw:t[0],text:t[2],tokens:this.lexer.inlineTokens(t[2])}}autolink(e){const t=this.rules.inline.autolink.exec(e);if(t){let e,n;return"@"===t[2]?(e=c(t[1]),n="mailto:"+e):(e=c(t[1]),n=e),{type:"link",raw:t[0],text:e,href:n,tokens:[{type:"text",raw:e,text:e}]}}}url(e){let t;if(t=this.rules.inline.url.exec(e)){let e,n;if("@"===t[2])e=c(t[0]),n="mailto:"+e;else{let s;do{s=t[0],t[0]=this.rules.inline._backpedal.exec(t[0])?.[0]??""}while(s!==t[0]);e=c(t[0]),n="www."===t[1]?"http://"+t[0]:t[0]}return{type:"link",raw:t[0],text:e,href:n,tokens:[{type:"text",raw:e,text:e}]}}}inlineText(e){const t=this.rules.inline.text.exec(e);if(t){let e;return e=this.lexer.state.inRawBlock?t[0]:c(t[0]),{type:"text",raw:t[0],text:e}}}}const b=/^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/,w=/(?:[*+-]|\d{1,9}[.)])/,m=p(/^(?!bull |blockCode|fences|blockquote|heading|html)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html))+?)\n {0,3}(=+|-+) *(?:\n+|$)/).replace(/bull/g,w).replace(/blockCode/g,/ {4}/).replace(/fences/g,/ {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g,/ {0,3}>/).replace(/heading/g,/ {0,3}#{1,6}/).replace(/html/g,/ {0,3}<[^\n>]+>\n/).getRegex(),y=/^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,$=/(?!\s*\])(?:\\.|[^\[\]\\])+/,z=p(/^ {0,3}\[(label)\]: *(?:\n *)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/).replace("label",$).replace("title",/(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex(),T=p(/^( {0,3}bull)([ \t][^\n]+?)?(?:\n|$)/).replace(/bull/g,w).getRegex(),R="address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul",_=/<!--(?:-?>|[\s\S]*?(?:-->|$))/,A=p("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n *)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$))","i").replace("comment",_).replace("tag",R).replace("attribute",/ +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(),S=p(y).replace("hr",b).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("|table","").replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)]) ").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",R).getRegex(),I={blockquote:p(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph",S).getRegex(),code:/^( {4}[^\n]+(?:\n(?: *(?:\n|$))*)?)+/,def:z,fences:/^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/,heading:/^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,hr:b,html:A,lheading:m,list:T,newline:/^(?: *(?:\n|$))+/,paragraph:S,table:k,text:/^[^\n]+/},E=p("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr",b).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("blockquote"," {0,3}>").replace("code"," {4}[^\\n]").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)]) ").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",R).getRegex(),q={...I,table:E,paragraph:p(y).replace("hr",b).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("table",E).replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)]) ").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",R).getRegex()},Z={...I,html:p("^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:\"[^\"]*\"|'[^']*'|\\s[^'\"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))").replace("comment",_).replace(/tag/g,"(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),def:/^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,heading:/^(#{1,6})(.*)(?:\n+|$)/,fences:k,lheading:/^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/,paragraph:p(y).replace("hr",b).replace("heading"," *#{1,6} *[^\n]").replace("lheading",m).replace("|table","").replace("blockquote"," {0,3}>").replace("|fences","").replace("|list","").replace("|html","").replace("|tag","").getRegex()},P=/^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,L=/^( {2,}|\\)\n(?!\s*$)/,Q="\\p{P}\\p{S}",v=p(/^((?![*_])[\spunctuation])/,"u").replace(/punctuation/g,Q).getRegex(),B=p(/^(?:\*+(?:((?!\*)[punct])|[^\s*]))|^_+(?:((?!_)[punct])|([^\s_]))/,"u").replace(/punct/g,Q).getRegex(),M=p("^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)[punct](\\*+)(?=[\\s]|$)|[^punct\\s](\\*+)(?!\\*)(?=[punct\\s]|$)|(?!\\*)[punct\\s](\\*+)(?=[^punct\\s])|[\\s](\\*+)(?!\\*)(?=[punct])|(?!\\*)[punct](\\*+)(?!\\*)(?=[punct])|[^punct\\s](\\*+)(?=[^punct\\s])","gu").replace(/punct/g,Q).getRegex(),O=p("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)[punct](_+)(?=[\\s]|$)|[^punct\\s](_+)(?!_)(?=[punct\\s]|$)|(?!_)[punct\\s](_+)(?=[^punct\\s])|[\\s](_+)(?!_)(?=[punct])|(?!_)[punct](_+)(?!_)(?=[punct])","gu").replace(/punct/g,Q).getRegex(),j=p(/\\([punct])/,"gu").replace(/punct/g,Q).getRegex(),D=p(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme",/[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email",/[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(),C=p(_).replace("(?:--\x3e|$)","--\x3e").getRegex(),H=p("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment",C).replace("attribute",/\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(),U=/(?:\[(?:\\.|[^\[\]\\])*\]|\\.|`[^`]*`|[^\[\]\\`])*?/,X=p(/^!?\[(label)\]\(\s*(href)(?:\s+(title))?\s*\)/).replace("label",U).replace("href",/<(?:\\.|[^\n<>\\])+>|[^\s\x00-\x1f]*/).replace("title",/"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex(),F=p(/^!?\[(label)\]\[(ref)\]/).replace("label",U).replace("ref",$).getRegex(),N=p(/^!?\[(ref)\](?:\[\])?/).replace("ref",$).getRegex(),G={_backpedal:k,anyPunctuation:j,autolink:D,blockSkip:/\[[^[\]]*?\]\([^\(\)]*?\)|`[^`]*?`|<[^<>]*?>/g,br:L,code:/^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,del:k,emStrongLDelim:B,emStrongRDelimAst:M,emStrongRDelimUnd:O,escape:P,link:X,nolink:N,punctuation:v,reflink:F,reflinkSearch:p("reflink|nolink(?!\\()","g").replace("reflink",F).replace("nolink",N).getRegex(),tag:H,text:/^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/,url:k},J={...G,link:p(/^!?\[(label)\]\((.*?)\)/).replace("label",U).getRegex(),reflink:p(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label",U).getRegex()},K={...G,escape:p(P).replace("])","~|])").getRegex(),url:p(/^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/,"i").replace("email",/[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(),_backpedal:/(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/,del:/^(~~?)(?=[^\s~])([\s\S]*?[^\s~])\1(?=[^~]|$)/,text:/^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/},V={...K,br:p(L).replace("{2,}","*").getRegex(),text:p(K.text).replace("\\b_","\\b_| {2,}\\n").replace(/\{2,\}/g,"*").getRegex()},W={normal:I,gfm:q,pedantic:Z},Y={normal:G,gfm:K,breaks:V,pedantic:J};class ee{tokens;options;state;tokenizer;inlineQueue;constructor(t){this.tokens=[],this.tokens.links=Object.create(null),this.options=t||e.defaults,this.options.tokenizer=this.options.tokenizer||new x,this.tokenizer=this.options.tokenizer,this.tokenizer.options=this.options,this.tokenizer.lexer=this,this.inlineQueue=[],this.state={inLink:!1,inRawBlock:!1,top:!0};const n={block:W.normal,inline:Y.normal};this.options.pedantic?(n.block=W.pedantic,n.inline=Y.pedantic):this.options.gfm&&(n.block=W.gfm,this.options.breaks?n.inline=Y.breaks:n.inline=Y.gfm),this.tokenizer.rules=n}static get rules(){return{block:W,inline:Y}}static lex(e,t){return new ee(t).lex(e)}static lexInline(e,t){return new ee(t).inlineTokens(e)}lex(e){e=e.replace(/\r\n|\r/g,"\n"),this.blockTokens(e,this.tokens);for(let e=0;e<this.inlineQueue.length;e++){const t=this.inlineQueue[e];this.inlineTokens(t.src,t.tokens)}return this.inlineQueue=[],this.tokens}blockTokens(e,t=[],n=!1){let s,r,i;for(e=this.options.pedantic?e.replace(/\t/g,"    ").replace(/^ +$/gm,""):e.replace(/^( *)(\t+)/gm,((e,t,n)=>t+"    ".repeat(n.length)));e;)if(!(this.options.extensions&&this.options.extensions.block&&this.options.extensions.block.some((n=>!!(s=n.call({lexer:this},e,t))&&(e=e.substring(s.raw.length),t.push(s),!0)))))if(s=this.tokenizer.space(e))e=e.substring(s.raw.length),1===s.raw.length&&t.length>0?t[t.length-1].raw+="\n":t.push(s);else if(s=this.tokenizer.code(e))e=e.substring(s.raw.length),r=t[t.length-1],!r||"paragraph"!==r.type&&"text"!==r.type?t.push(s):(r.raw+="\n"+s.raw,r.text+="\n"+s.text,this.inlineQueue[this.inlineQueue.length-1].src=r.text);else if(s=this.tokenizer.fences(e))e=e.substring(s.raw.length),t.push(s);else if(s=this.tokenizer.heading(e))e=e.substring(s.raw.length),t.push(s);else if(s=this.tokenizer.hr(e))e=e.substring(s.raw.length),t.push(s);else if(s=this.tokenizer.blockquote(e))e=e.substring(s.raw.length),t.push(s);else if(s=this.tokenizer.list(e))e=e.substring(s.raw.length),t.push(s);else if(s=this.tokenizer.html(e))e=e.substring(s.raw.length),t.push(s);else if(s=this.tokenizer.def(e))e=e.substring(s.raw.length),r=t[t.length-1],!r||"paragraph"!==r.type&&"text"!==r.type?this.tokens.links[s.tag]||(this.tokens.links[s.tag]={href:s.href,title:s.title}):(r.raw+="\n"+s.raw,r.text+="\n"+s.raw,this.inlineQueue[this.inlineQueue.length-1].src=r.text);else if(s=this.tokenizer.table(e))e=e.substring(s.raw.length),t.push(s);else if(s=this.tokenizer.lheading(e))e=e.substring(s.raw.length),t.push(s);else{if(i=e,this.options.extensions&&this.options.extensions.startBlock){let t=1/0;const n=e.slice(1);let s;this.options.extensions.startBlock.forEach((e=>{s=e.call({lexer:this},n),"number"==typeof s&&s>=0&&(t=Math.min(t,s))})),t<1/0&&t>=0&&(i=e.substring(0,t+1))}if(this.state.top&&(s=this.tokenizer.paragraph(i)))r=t[t.length-1],n&&"paragraph"===r?.type?(r.raw+="\n"+s.raw,r.text+="\n"+s.text,this.inlineQueue.pop(),this.inlineQueue[this.inlineQueue.length-1].src=r.text):t.push(s),n=i.length!==e.length,e=e.substring(s.raw.length);else if(s=this.tokenizer.text(e))e=e.substring(s.raw.length),r=t[t.length-1],r&&"text"===r.type?(r.raw+="\n"+s.raw,r.text+="\n"+s.text,this.inlineQueue.pop(),this.inlineQueue[this.inlineQueue.length-1].src=r.text):t.push(s);else if(e){const t="Infinite loop on byte: "+e.charCodeAt(0);if(this.options.silent){console.error(t);break}throw new Error(t)}}return this.state.top=!0,t}inline(e,t=[]){return this.inlineQueue.push({src:e,tokens:t}),t}inlineTokens(e,t=[]){let n,s,r,i,l,o,a=e;if(this.tokens.links){const e=Object.keys(this.tokens.links);if(e.length>0)for(;null!=(i=this.tokenizer.rules.inline.reflinkSearch.exec(a));)e.includes(i[0].slice(i[0].lastIndexOf("[")+1,-1))&&(a=a.slice(0,i.index)+"["+"a".repeat(i[0].length-2)+"]"+a.slice(this.tokenizer.rules.inline.reflinkSearch.lastIndex))}for(;null!=(i=this.tokenizer.rules.inline.blockSkip.exec(a));)a=a.slice(0,i.index)+"["+"a".repeat(i[0].length-2)+"]"+a.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);for(;null!=(i=this.tokenizer.rules.inline.anyPunctuation.exec(a));)a=a.slice(0,i.index)+"++"+a.slice(this.tokenizer.rules.inline.anyPunctuation.lastIndex);for(;e;)if(l||(o=""),l=!1,!(this.options.extensions&&this.options.extensions.inline&&this.options.extensions.inline.some((s=>!!(n=s.call({lexer:this},e,t))&&(e=e.substring(n.raw.length),t.push(n),!0)))))if(n=this.tokenizer.escape(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.tag(e))e=e.substring(n.raw.length),s=t[t.length-1],s&&"text"===n.type&&"text"===s.type?(s.raw+=n.raw,s.text+=n.text):t.push(n);else if(n=this.tokenizer.link(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.reflink(e,this.tokens.links))e=e.substring(n.raw.length),s=t[t.length-1],s&&"text"===n.type&&"text"===s.type?(s.raw+=n.raw,s.text+=n.text):t.push(n);else if(n=this.tokenizer.emStrong(e,a,o))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.codespan(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.br(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.del(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.autolink(e))e=e.substring(n.raw.length),t.push(n);else if(this.state.inLink||!(n=this.tokenizer.url(e))){if(r=e,this.options.extensions&&this.options.extensions.startInline){let t=1/0;const n=e.slice(1);let s;this.options.extensions.startInline.forEach((e=>{s=e.call({lexer:this},n),"number"==typeof s&&s>=0&&(t=Math.min(t,s))})),t<1/0&&t>=0&&(r=e.substring(0,t+1))}if(n=this.tokenizer.inlineText(r))e=e.substring(n.raw.length),"_"!==n.raw.slice(-1)&&(o=n.raw.slice(-1)),l=!0,s=t[t.length-1],s&&"text"===s.type?(s.raw+=n.raw,s.text+=n.text):t.push(n);else if(e){const t="Infinite loop on byte: "+e.charCodeAt(0);if(this.options.silent){console.error(t);break}throw new Error(t)}}else e=e.substring(n.raw.length),t.push(n);return t}}class te{options;parser;constructor(t){this.options=t||e.defaults}space(e){return""}code({text:e,lang:t,escaped:n}){const s=(t||"").match(/^\S*/)?.[0],r=e.replace(/\n$/,"")+"\n";return s?'<pre><code class="language-'+c(s)+'">'+(n?r:c(r,!0))+"</code></pre>\n":"<pre><code>"+(n?r:c(r,!0))+"</code></pre>\n"}blockquote({tokens:e}){return`<blockquote>\n${this.parser.parse(e)}</blockquote>\n`}html({text:e}){return e}heading({tokens:e,depth:t}){return`<h${t}>${this.parser.parseInline(e)}</h${t}>\n`}hr(e){return"<hr>\n"}list(e){const t=e.ordered,n=e.start;let s="";for(let t=0;t<e.items.length;t++){const n=e.items[t];s+=this.listitem(n)}const r=t?"ol":"ul";return"<"+r+(t&&1!==n?' start="'+n+'"':"")+">\n"+s+"</"+r+">\n"}listitem(e){let t="";if(e.task){const n=this.checkbox({checked:!!e.checked});e.loose?e.tokens.length>0&&"paragraph"===e.tokens[0].type?(e.tokens[0].text=n+" "+e.tokens[0].text,e.tokens[0].tokens&&e.tokens[0].tokens.length>0&&"text"===e.tokens[0].tokens[0].type&&(e.tokens[0].tokens[0].text=n+" "+e.tokens[0].tokens[0].text)):e.tokens.unshift({type:"text",raw:n+" ",text:n+" "}):t+=n+" "}return t+=this.parser.parse(e.tokens,!!e.loose),`<li>${t}</li>\n`}checkbox({checked:e}){return"<input "+(e?'checked="" ':"")+'disabled="" type="checkbox">'}paragraph({tokens:e}){return`<p>${this.parser.parseInline(e)}</p>\n`}table(e){let t="",n="";for(let t=0;t<e.header.length;t++)n+=this.tablecell(e.header[t]);t+=this.tablerow({text:n});let s="";for(let t=0;t<e.rows.length;t++){const r=e.rows[t];n="";for(let e=0;e<r.length;e++)n+=this.tablecell(r[e]);s+=this.tablerow({text:n})}return s&&(s=`<tbody>${s}</tbody>`),"<table>\n<thead>\n"+t+"</thead>\n"+s+"</table>\n"}tablerow({text:e}){return`<tr>\n${e}</tr>\n`}tablecell(e){const t=this.parser.parseInline(e.tokens),n=e.header?"th":"td";return(e.align?`<${n} align="${e.align}">`:`<${n}>`)+t+`</${n}>\n`}strong({tokens:e}){return`<strong>${this.parser.parseInline(e)}</strong>`}em({tokens:e}){return`<em>${this.parser.parseInline(e)}</em>`}codespan({text:e}){return`<code>${e}</code>`}br(e){return"<br>"}del({tokens:e}){return`<del>${this.parser.parseInline(e)}</del>`}link({href:e,title:t,tokens:n}){const s=this.parser.parseInline(n),r=u(e);if(null===r)return s;let i='<a href="'+(e=r)+'"';return t&&(i+=' title="'+t+'"'),i+=">"+s+"</a>",i}image({href:e,title:t,text:n}){const s=u(e);if(null===s)return n;let r=`<img src="${e=s}" alt="${n}"`;return t&&(r+=` title="${t}"`),r+=">",r}text(e){return"tokens"in e&&e.tokens?this.parser.parseInline(e.tokens):e.text}}class ne{strong({text:e}){return e}em({text:e}){return e}codespan({text:e}){return e}del({text:e}){return e}html({text:e}){return e}text({text:e}){return e}link({text:e}){return""+e}image({text:e}){return""+e}br(){return""}}class se{options;renderer;textRenderer;constructor(t){this.options=t||e.defaults,this.options.renderer=this.options.renderer||new te,this.renderer=this.options.renderer,this.renderer.options=this.options,this.renderer.parser=this,this.textRenderer=new ne}static parse(e,t){return new se(t).parse(e)}static parseInline(e,t){return new se(t).parseInline(e)}parse(e,t=!0){let n="";for(let s=0;s<e.length;s++){const r=e[s];if(this.options.extensions&&this.options.extensions.renderers&&this.options.extensions.renderers[r.type]){const e=r,t=this.options.extensions.renderers[e.type].call({parser:this},e);if(!1!==t||!["space","hr","heading","code","table","blockquote","list","html","paragraph","text"].includes(e.type)){n+=t||"";continue}}const i=r;switch(i.type){case"space":n+=this.renderer.space(i);continue;case"hr":n+=this.renderer.hr(i);continue;case"heading":n+=this.renderer.heading(i);continue;case"code":n+=this.renderer.code(i);continue;case"table":n+=this.renderer.table(i);continue;case"blockquote":n+=this.renderer.blockquote(i);continue;case"list":n+=this.renderer.list(i);continue;case"html":n+=this.renderer.html(i);continue;case"paragraph":n+=this.renderer.paragraph(i);continue;case"text":{let r=i,l=this.renderer.text(r);for(;s+1<e.length&&"text"===e[s+1].type;)r=e[++s],l+="\n"+this.renderer.text(r);n+=t?this.renderer.paragraph({type:"paragraph",raw:l,text:l,tokens:[{type:"text",raw:l,text:l}]}):l;continue}default:{const e='Token with "'+i.type+'" type was not found.';if(this.options.silent)return console.error(e),"";throw new Error(e)}}}return n}parseInline(e,t){t=t||this.renderer;let n="";for(let s=0;s<e.length;s++){const r=e[s];if(this.options.extensions&&this.options.extensions.renderers&&this.options.extensions.renderers[r.type]){const e=this.options.extensions.renderers[r.type].call({parser:this},r);if(!1!==e||!["escape","html","link","image","strong","em","codespan","br","del","text"].includes(r.type)){n+=e||"";continue}}const i=r;switch(i.type){case"escape":case"text":n+=t.text(i);break;case"html":n+=t.html(i);break;case"link":n+=t.link(i);break;case"image":n+=t.image(i);break;case"strong":n+=t.strong(i);break;case"em":n+=t.em(i);break;case"codespan":n+=t.codespan(i);break;case"br":n+=t.br(i);break;case"del":n+=t.del(i);break;default:{const e='Token with "'+i.type+'" type was not found.';if(this.options.silent)return console.error(e),"";throw new Error(e)}}}return n}}class re{options;constructor(t){this.options=t||e.defaults}static passThroughHooks=new Set(["preprocess","postprocess","processAllTokens"]);preprocess(e){return e}postprocess(e){return e}processAllTokens(e){return e}}class ie{defaults={async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null};options=this.setOptions;parse=this.parseMarkdown(ee.lex,se.parse);parseInline=this.parseMarkdown(ee.lexInline,se.parseInline);Parser=se;Renderer=te;TextRenderer=ne;Lexer=ee;Tokenizer=x;Hooks=re;constructor(...e){this.use(...e)}walkTokens(e,t){let n=[];for(const s of e)switch(n=n.concat(t.call(this,s)),s.type){case"table":{const e=s;for(const s of e.header)n=n.concat(this.walkTokens(s.tokens,t));for(const s of e.rows)for(const e of s)n=n.concat(this.walkTokens(e.tokens,t));break}case"list":{const e=s;n=n.concat(this.walkTokens(e.items,t));break}default:{const e=s;this.defaults.extensions?.childTokens?.[e.type]?this.defaults.extensions.childTokens[e.type].forEach((s=>{const r=e[s].flat(1/0);n=n.concat(this.walkTokens(r,t))})):e.tokens&&(n=n.concat(this.walkTokens(e.tokens,t)))}}return n}use(...e){const t=this.defaults.extensions||{renderers:{},childTokens:{}};return e.forEach((e=>{const n={...e};if(n.async=this.defaults.async||n.async||!1,e.extensions&&(e.extensions.forEach((e=>{if(!e.name)throw new Error("extension name required");if("renderer"in e){const n=t.renderers[e.name];t.renderers[e.name]=n?function(...t){let s=e.renderer.apply(this,t);return!1===s&&(s=n.apply(this,t)),s}:e.renderer}if("tokenizer"in e){if(!e.level||"block"!==e.level&&"inline"!==e.level)throw new Error("extension level must be 'block' or 'inline'");const n=t[e.level];n?n.unshift(e.tokenizer):t[e.level]=[e.tokenizer],e.start&&("block"===e.level?t.startBlock?t.startBlock.push(e.start):t.startBlock=[e.start]:"inline"===e.level&&(t.startInline?t.startInline.push(e.start):t.startInline=[e.start]))}"childTokens"in e&&e.childTokens&&(t.childTokens[e.name]=e.childTokens)})),n.extensions=t),e.renderer){const t=this.defaults.renderer||new te(this.defaults);for(const n in e.renderer){if(!(n in t))throw new Error(`renderer '${n}' does not exist`);if(["options","parser"].includes(n))continue;const s=n,r=e.renderer[s],i=t[s];t[s]=(...e)=>{let n=r.apply(t,e);return!1===n&&(n=i.apply(t,e)),n||""}}n.renderer=t}if(e.tokenizer){const t=this.defaults.tokenizer||new x(this.defaults);for(const n in e.tokenizer){if(!(n in t))throw new Error(`tokenizer '${n}' does not exist`);if(["options","rules","lexer"].includes(n))continue;const s=n,r=e.tokenizer[s],i=t[s];t[s]=(...e)=>{let n=r.apply(t,e);return!1===n&&(n=i.apply(t,e)),n}}n.tokenizer=t}if(e.hooks){const t=this.defaults.hooks||new re;for(const n in e.hooks){if(!(n in t))throw new Error(`hook '${n}' does not exist`);if("options"===n)continue;const s=n,r=e.hooks[s],i=t[s];re.passThroughHooks.has(n)?t[s]=e=>{if(this.defaults.async)return Promise.resolve(r.call(t,e)).then((e=>i.call(t,e)));const n=r.call(t,e);return i.call(t,n)}:t[s]=(...e)=>{let n=r.apply(t,e);return!1===n&&(n=i.apply(t,e)),n}}n.hooks=t}if(e.walkTokens){const t=this.defaults.walkTokens,s=e.walkTokens;n.walkTokens=function(e){let n=[];return n.push(s.call(this,e)),t&&(n=n.concat(t.call(this,e))),n}}this.defaults={...this.defaults,...n}})),this}setOptions(e){return this.defaults={...this.defaults,...e},this}lexer(e,t){return ee.lex(e,t??this.defaults)}parser(e,t){return se.parse(e,t??this.defaults)}parseMarkdown(e,t){return(n,s)=>{const r={...s},i={...this.defaults,...r},l=this.onError(!!i.silent,!!i.async);if(!0===this.defaults.async&&!1===r.async)return l(new Error("marked(): The async option was set to true by an extension. Remove async: false from the parse options object to return a Promise."));if(null==n)return l(new Error("marked(): input parameter is undefined or null"));if("string"!=typeof n)return l(new Error("marked(): input parameter is of type "+Object.prototype.toString.call(n)+", string expected"));if(i.hooks&&(i.hooks.options=i),i.async)return Promise.resolve(i.hooks?i.hooks.preprocess(n):n).then((t=>e(t,i))).then((e=>i.hooks?i.hooks.processAllTokens(e):e)).then((e=>i.walkTokens?Promise.all(this.walkTokens(e,i.walkTokens)).then((()=>e)):e)).then((e=>t(e,i))).then((e=>i.hooks?i.hooks.postprocess(e):e)).catch(l);try{i.hooks&&(n=i.hooks.preprocess(n));let s=e(n,i);i.hooks&&(s=i.hooks.processAllTokens(s)),i.walkTokens&&this.walkTokens(s,i.walkTokens);let r=t(s,i);return i.hooks&&(r=i.hooks.postprocess(r)),r}catch(e){return l(e)}}}onError(e,t){return n=>{if(n.message+="\nPlease report this to https://github.com/markedjs/marked.",e){const e="<p>An error occurred:</p><pre>"+c(n.message+"",!0)+"</pre>";return t?Promise.resolve(e):e}if(t)return Promise.reject(n);throw n}}}const le=new ie;function oe(e,t){return le.parse(e,t)}oe.options=oe.setOptions=function(e){return le.setOptions(e),oe.defaults=le.defaults,n(oe.defaults),oe},oe.getDefaults=t,oe.defaults=e.defaults,oe.use=function(...e){return le.use(...e),oe.defaults=le.defaults,n(oe.defaults),oe},oe.walkTokens=function(e,t){return le.walkTokens(e,t)},oe.parseInline=le.parseInline,oe.Parser=se,oe.parser=se.parse,oe.Renderer=te,oe.TextRenderer=ne,oe.Lexer=ee,oe.lexer=ee.lex,oe.Tokenizer=x,oe.Hooks=re,oe.parse=oe;const ae=oe.options,ce=oe.setOptions,he=oe.use,pe=oe.walkTokens,ue=oe.parseInline,ke=oe,ge=se.parse,fe=ee.lex;e.Hooks=re,e.Lexer=ee,e.Marked=ie,e.Parser=se,e.Renderer=te,e.TextRenderer=ne,e.Tokenizer=x,e.getDefaults=t,e.lexer=fe,e.marked=oe,e.options=ae,e.parse=ke,e.parseInline=ue,e.parser=ge,e.setOptions=ce,e.use=he,e.walkTokens=pe}));
+
+    </script>
 
     <script>
-        // ==== Markdown Loading & Rendering ====
+        // ==== Base64 Decode Helper ====
+        function b64decode(str) {
+            return decodeURIComponent(atob(str).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
+
+        // ==== Embedded Markdown (base64-encoded by sync-guide.ps1) ====
+        const EMBEDDED = {
+            tutorial: "IyBHaXQgJiBHaXRIdWIg4oCUIFN0ZXAtYnktU3RlcCBUdXRvcmlhbAoKPiBFdmVyeXRoaW5nIHlvdSBuZWVkIHRvIGdvIGZyb20gemVybyB0byBtYW5hZ2luZyBjb2RlIG9uIEdpdEh1Yi4KPiBGb2xsb3cgZWFjaCBzdGVwIGV4YWN0bHkgYXMgd3JpdHRlbi4gQ29tbWFuZHMgYXJlIHNob3duIGluIGBjb2RlIGJsb2Nrc2AuCgotLS0KCiMjIFByZXJlcXVpc2l0ZXMKCkJlZm9yZSB5b3UgYmVnaW4sIGluc3RhbGwgdGhlc2UgdHdvIHRvb2xzIG9uIHlvdXIgV2luZG93cyBtYWNoaW5lOgoKIyMjIEluc3RhbGwgR2l0CgpgYGAKd2luZ2V0IGluc3RhbGwgLS1pZCBHaXQuR2l0IC1lCmBgYAoKIyMjIEluc3RhbGwgR2l0SHViIENMSQoKYGBgCndpbmdldCBpbnN0YWxsIC0taWQgR2l0SHViLmNsaSAtZQpgYGAKCkFmdGVyIGluc3RhbGxpbmcsICoqY2xvc2UgYW5kIHJlb3BlbiB5b3VyIHRlcm1pbmFsKiogc28gdGhlIG5ldyBjb21tYW5kcyBhcmUgYXZhaWxhYmxlLgoKIyMjIFZlcmlmeSBJbnN0YWxsYXRpb24KCmBgYApnaXQgLS12ZXJzaW9uCmdoIC0tdmVyc2lvbgpgYGAKCllvdSBzaG91bGQgc2VlIHZlcnNpb24gbnVtYmVycyBmb3IgYm90aCB0b29scy4gSWYgbm90LCByZXN0YXJ0IHlvdXIgdGVybWluYWwuCgotLS0KCiMjIFBhcnQgMSDigJQgQ3JlYXRlIGEgTmV3IFJlcG9zaXRvcnkKCiMjIyBTdGVwIDE6IEF1dGhlbnRpY2F0ZSB3aXRoIEdpdEh1YgoKVGhpcyBjb25uZWN0cyB5b3VyIHRlcm1pbmFsIHRvIHlvdXIgR2l0SHViIGFjY291bnQuIFlvdSBvbmx5IG5lZWQgdG8gZG8gdGhpcyBvbmNlLgoKYGBgCmdoIGF1dGggbG9naW4gLXAgaHR0cHMgLXcKYGBgCgoqKldoYXQgaGFwcGVuczoqKgoxLiBUaGUgdGVybWluYWwgc2hvd3MgYSBvbmUtdGltZSBjb2RlIChlLmcuLCBgQTFCMi1DM0Q0YCkKMi4gWW91ciBicm93c2VyIG9wZW5zIHRvIGBodHRwczovL2dpdGh1Yi5jb20vbG9naW4vZGV2aWNlYAozLiBFbnRlciB0aGUgY29kZSBpbiB0aGUgYnJvd3Nlcgo0LiBDbGljayAiQXV0aG9yaXplIiB0byBhcHByb3ZlCgoqKlZlcmlmeSBpdCB3b3JrZWQ6KioKCmBgYApnaCBhdXRoIHN0YXR1cwpgYGAKCllvdSBzaG91bGQgc2VlOiBgTG9nZ2VkIGluIHRvIGdpdGh1Yi5jb20gYXMgWU9VUl9VU0VSTkFNRWAKCiMjIyBTdGVwIDI6IENvbmZpZ3VyZSBZb3VyIEdpdCBJZGVudGl0eQoKR2l0IG5lZWRzIHRvIGtub3cgeW91ciBuYW1lIGFuZCBlbWFpbCBmb3IgY29tbWl0cy4gU2V0IHRoaXMgb25jZSBnbG9iYWxseToKCmBgYApnaXQgY29uZmlnIC0tZ2xvYmFsIHVzZXIubmFtZSAiWW91ciBGdWxsIE5hbWUiCmdpdCBjb25maWcgLS1nbG9iYWwgdXNlci5lbWFpbCAieW91ci5lbWFpbEBleGFtcGxlLmNvbSIKYGBgCgoqKlZlcmlmeToqKgoKYGBgCmdpdCBjb25maWcgLS1nbG9iYWwgdXNlci5uYW1lCmdpdCBjb25maWcgLS1nbG9iYWwgdXNlci5lbWFpbApgYGAKCiMjIyBTdGVwIDM6IENyZWF0ZSBZb3VyIFByb2plY3QgRm9sZGVyCgpQaWNrIGEgbG9jYXRpb24gYW5kIGNyZWF0ZSBhIG5ldyBmb2xkZXIgZm9yIHlvdXIgcHJvamVjdDoKCmBgYApta2RpciBteS13ZWJzaXRlCmNkIG15LXdlYnNpdGUKYGBgCgojIyMgU3RlcCA0OiBDcmVhdGUgWW91ciBXZWJzaXRlIEZpbGVzCgpDcmVhdGUgdGhlc2UgdGhyZWUgZmlsZXMgaW5zaWRlIHRoZSBgbXktd2Vic2l0ZWAgZm9sZGVyOgoKKippbmRleC5odG1sOioqCgpgYGBodG1sCjwhRE9DVFlQRSBodG1sPgo8aHRtbCBsYW5nPSJlbiI+CjxoZWFkPgogICAgPG1ldGEgY2hhcnNldD0iVVRGLTgiPgogICAgPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAiPgogICAgPHRpdGxlPk15IFdlYnNpdGU8L3RpdGxlPgogICAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJzdHlsZS5jc3MiPgo8L2hlYWQ+Cjxib2R5PgogICAgPGhlYWRlcj4KICAgICAgICA8aDE+V2VsY29tZSB0byBNeSBXZWJzaXRlPC9oMT4KICAgIDwvaGVhZGVyPgogICAgPG1haW4+CiAgICAgICAgPHA+SGVsbG8hIFRoaXMgaXMgbXkgZmlyc3Qgd2Vic2l0ZSBtYW5hZ2VkIHdpdGggR2l0IGFuZCBHaXRIdWIuPC9wPgogICAgPC9tYWluPgogICAgPHNjcmlwdCBzcmM9InNjcmlwdC5qcyI+PC9zY3JpcHQ+CjwvYm9keT4KPC9odG1sPgpgYGAKCioqc3R5bGUuY3NzOioqCgpgYGBjc3MKYm9keSB7CiAgICBmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7CiAgICBtYXgtd2lkdGg6IDgwMHB4OwogICAgbWFyZ2luOiAwIGF1dG87CiAgICBwYWRkaW5nOiAyMHB4Owp9CgpoZWFkZXIgewogICAgYmFja2dyb3VuZDogIzAzNjZkNjsKICAgIGNvbG9yOiB3aGl0ZTsKICAgIHBhZGRpbmc6IDIwcHg7CiAgICBib3JkZXItcmFkaXVzOiA4cHg7Cn0KYGBgCgoqKnNjcmlwdC5qczoqKgoKYGBgamF2YXNjcmlwdApkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdET01Db250ZW50TG9hZGVkJywgKCkgPT4gewogICAgY29uc29sZS5sb2coJ1dlYnNpdGUgbG9hZGVkIHN1Y2Nlc3NmdWxseSEnKTsKfSk7CmBgYAoKIyMjIFN0ZXAgNTogSW5pdGlhbGl6ZSBhIEdpdCBSZXBvc2l0b3J5CgpUaGlzIHRlbGxzIEdpdCB0byBzdGFydCB0cmFja2luZyBjaGFuZ2VzIGluIHRoaXMgZm9sZGVyOgoKYGBgCmdpdCBpbml0CmBgYAoKKipXaGF0IGhhcHBlbnM6KiogR2l0IGNyZWF0ZXMgYSBoaWRkZW4gYC5naXRgIGZvbGRlciB0aGF0IHN0b3JlcyBhbGwgdmVyc2lvbiBoaXN0b3J5LgoKIyMjIFN0ZXAgNjogU3RhZ2UgYW5kIENvbW1pdCBZb3VyIEZpbGVzCgoqKlN0YWdpbmcqKiA9IHNlbGVjdGluZyB3aGljaCBmaWxlcyB0byBpbmNsdWRlIGluIHlvdXIgbmV4dCBzbmFwc2hvdC4KKipDb21taXR0aW5nKiogPSBzYXZpbmcgdGhhdCBzbmFwc2hvdCB3aXRoIGEgZGVzY3JpcHRpb24uCgpgYGAKZ2l0IGFkZCAuCmdpdCBjb21taXQgLW0gIkluaXRpYWwgY29tbWl0OiBzaW1wbGUgd2Vic2l0ZSB3aXRoIEhUTUwsIENTUywgYW5kIEpTIgpgYGAKCi0gYGdpdCBhZGQgLmAg4oCUIHN0YWdlcyBBTEwgZmlsZXMgaW4gdGhlIGN1cnJlbnQgZm9sZGVyCi0gYGdpdCBjb21taXQgLW0gIm1lc3NhZ2UiYCDigJQgc2F2ZXMgdGhlIHNuYXBzaG90IHdpdGggeW91ciBtZXNzYWdlCgojIyMgU3RlcCA3OiBDcmVhdGUgYSBHaXRIdWIgUmVwb3NpdG9yeSBhbmQgUHVzaAoKVGhpcyBzaW5nbGUgY29tbWFuZCBjcmVhdGVzIGEgcmVwbyBvbiBHaXRIdWIgQU5EIHVwbG9hZHMgeW91ciBjb2RlOgoKYGBgCmdoIHJlcG8gY3JlYXRlIG15LXdlYnNpdGUgLS1wdWJsaWMgLS1zb3VyY2U9LiAtLXB1c2gKYGBgCgoqKldoYXQgZWFjaCBmbGFnIG1lYW5zOioqCi0gYG15LXdlYnNpdGVgIOKAlCB0aGUgbmFtZSBvZiB5b3VyIG5ldyBHaXRIdWIgcmVwbwotIGAtLXB1YmxpY2Ag4oCUIGFueW9uZSBjYW4gc2VlIGl0ICh1c2UgYC0tcHJpdmF0ZWAgZm9yIHByaXZhdGUpCi0gYC0tc291cmNlPS5gIOKAlCB1c2UgdGhlIGN1cnJlbnQgZm9sZGVyIGFzIHRoZSBzb3VyY2UKLSBgLS1wdXNoYCDigJQgaW1tZWRpYXRlbHkgdXBsb2FkIHlvdXIgY29tbWl0cwoKKipBZnRlciB0aGlzLCB5b3VyIGNvZGUgaXMgbGl2ZSBhdDoqKiBgaHR0cHM6Ly9naXRodWIuY29tL1lPVVJfVVNFUk5BTUUvbXktd2Vic2l0ZWAKCi0tLQoKIyMgUGFydCAyIOKAlCBNYWtlIENoYW5nZXMgVXNpbmcgYSBQdWxsIFJlcXVlc3QKClB1bGwgUmVxdWVzdHMgKFBScykgYXJlIGhvdyB0ZWFtcyByZXZpZXcgYW5kIGFwcHJvdmUgY2hhbmdlcyBiZWZvcmUgbWVyZ2luZyB0aGVtIGludG8gdGhlIG1haW4gY29kZWJhc2UuIEV2ZW4gZm9yIHNvbG8gcHJvamVjdHMsIHRoZXkncmUgYSBnb29kIGhhYml0LgoKIyMjIFN0ZXAgODogQ3JlYXRlIGEgRmVhdHVyZSBCcmFuY2gKCkEgKipicmFuY2gqKiBpcyBhIHNlcGFyYXRlIGxpbmUgb2YgZGV2ZWxvcG1lbnQuIFRoZSBgbWFpbmAgb3IgYG1hc3RlcmAgYnJhbmNoIGlzIHlvdXIgc3RhYmxlIGNvZGUuIEZlYXR1cmUgYnJhbmNoZXMgYXJlIHdoZXJlIHlvdSBleHBlcmltZW50LgoKYGBgCmdpdCBjaGVja291dCAtYiBhZGQtZGFyay1tb2RlCmBgYAoKKipXaGF0IHRoaXMgZG9lczoqKgotIENyZWF0ZXMgYSBuZXcgYnJhbmNoIGNhbGxlZCBgYWRkLWRhcmstbW9kZWAKLSBTd2l0Y2hlcyB5b3UgdG8gdGhhdCBicmFuY2ggaW1tZWRpYXRlbHkKCioqVmVyaWZ5IHdoaWNoIGJyYW5jaCB5b3UncmUgb246KioKCmBgYApnaXQgYnJhbmNoCmBgYAoKVGhlIGAqYCBzaG93cyB5b3VyIGN1cnJlbnQgYnJhbmNoLgoKIyMjIFN0ZXAgOTogTWFrZSBZb3VyIENoYW5nZXMKCkVkaXQgeW91ciBmaWxlcy4gRm9yIGV4YW1wbGUsIGFkZCBhIGRhcmsgbW9kZSBidXR0b24gdG8gYGluZGV4Lmh0bWxgLCBhZGQgZGFyayBtb2RlIENTUyB0byBgc3R5bGUuY3NzYCwgYW5kIGFkZCB0b2dnbGUgbG9naWMgdG8gYHNjcmlwdC5qc2AuCgpUaGUga2V5IHRoaW5nOiBtYWtlIHlvdXIgY2hhbmdlcyB3aGlsZSBvbiB0aGUgZmVhdHVyZSBicmFuY2gsIG5vdCBvbiBgbWFpbmAvYG1hc3RlcmAuCgojIyMgU3RlcCAxMDogQ29tbWl0IGFuZCBQdXNoIFlvdXIgQnJhbmNoCgpgYGAKZ2l0IGFkZCAuCmdpdCBjb21taXQgLW0gIkFkZCBkYXJrIG1vZGUgdG9nZ2xlIGZlYXR1cmUiCmdpdCBwdXNoIC11IG9yaWdpbiBhZGQtZGFyay1tb2RlCmBgYAoKLSBgZ2l0IHB1c2ggLXUgb3JpZ2luIGFkZC1kYXJrLW1vZGVgIOKAlCB1cGxvYWRzIHlvdXIgYnJhbmNoIHRvIEdpdEh1YgotIGAtdWAgc2V0cyB1cCB0cmFja2luZyBzbyBmdXR1cmUgYGdpdCBwdXNoYCBjb21tYW5kcyBrbm93IHdoZXJlIHRvIGdvCgojIyMgU3RlcCAxMTogT3BlbiBhIFB1bGwgUmVxdWVzdAoKYGBgCmdoIHByIGNyZWF0ZSAtLXRpdGxlICJBZGQgZGFyayBtb2RlIHRvZ2dsZSIgLS1ib2R5ICJBZGRzIGEgZGFyayBtb2RlIGJ1dHRvbiB0aGF0IHRvZ2dsZXMgYmV0d2VlbiBsaWdodCBhbmQgZGFyayB0aGVtZXMuIgpgYGAKCioqV2hhdCBoYXBwZW5zOioqCi0gQSBQUiBpcyBjcmVhdGVkIG9uIEdpdEh1YgotIFRoZSB0ZXJtaW5hbCBzaG93cyB0aGUgUFIgVVJMIChlLmcuLCBgaHR0cHM6Ly9naXRodWIuY29tL1lPVS9teS13ZWJzaXRlL3B1bGwvMWApCi0gWW91IChvciBhIHRlYW1tYXRlKSBjYW4gcmV2aWV3IHRoZSBjaGFuZ2VzIG9uIEdpdEh1YiBiZWZvcmUgbWVyZ2luZwoKIyMjIFN0ZXAgMTI6IE1lcmdlIHRoZSBQdWxsIFJlcXVlc3QKCk9uY2UgeW91J3JlIGhhcHB5IHdpdGggdGhlIGNoYW5nZXM6CgpgYGAKZ2ggcHIgbWVyZ2UgMSAtLW1lcmdlIC0tZGVsZXRlLWJyYW5jaApgYGAKCioqV2hhdCBlYWNoIGZsYWcgbWVhbnM6KioKLSBgMWAg4oCUIHRoZSBQUiBudW1iZXIKLSBgLS1tZXJnZWAg4oCUIHVzZSBhIG1lcmdlIGNvbW1pdCAoa2VlcHMgaGlzdG9yeSkKLSBgLS1kZWxldGUtYnJhbmNoYCDigJQgZGVsZXRlcyB0aGUgZmVhdHVyZSBicmFuY2ggYWZ0ZXIgbWVyZ2luZyAoY2xlYW51cCkKCioqV2hhdCBoYXBwZW5zOioqCi0gWW91ciBjaGFuZ2VzIGFyZSBtZXJnZWQgaW50byBgbWFzdGVyYC9gbWFpbmAKLSBUaGUgYGFkZC1kYXJrLW1vZGVgIGJyYW5jaCBpcyBkZWxldGVkIChib3RoIGxvY2FsbHkgYW5kIG9uIEdpdEh1YikKLSBZb3UncmUgc3dpdGNoZWQgYmFjayB0byB0aGUgYG1hc3RlcmAgYnJhbmNoIGF1dG9tYXRpY2FsbHkKCi0tLQoKIyMgUGFydCAzIOKAlCBXb3JrIHdpdGggRXhpc3RpbmcgUmVwb3NpdG9yaWVzCgojIyMgU3RlcCAxMzogTGlzdCBBbGwgWW91ciBHaXRIdWIgUmVwb3NpdG9yaWVzCgpgYGAKZ2ggcmVwbyBsaXN0CmBgYAoKVGhpcyBzaG93cyBhbGwgcmVwb3MgaW4geW91ciBHaXRIdWIgYWNjb3VudCB3aXRoIHRoZWlyIG5hbWVzLCB2aXNpYmlsaXR5IChwdWJsaWMvcHJpdmF0ZSksIGFuZCBsYXN0IHVwZGF0ZSB0aW1lLgoKIyMjIFN0ZXAgMTQ6IENsb25lIGEgUmVwb3NpdG9yeQoKKipDbG9uaW5nKiogPSBkb3dubG9hZGluZyBhIEdpdEh1YiByZXBvIHRvIHlvdXIgbG9jYWwgbWFjaGluZS4KCmBgYApnaCByZXBvIGNsb25lIFlPVVJfVVNFUk5BTUUvUkVQT19OQU1FCmBgYAoKRm9yIGV4YW1wbGU6CgpgYGAKZ2ggcmVwbyBjbG9uZSBzbmNoYW5kZS90ZXN0Z2l0CmNkIHRlc3RnaXQKYGBgCgoqKldoYXQgaGFwcGVuczoqKgotIERvd25sb2FkcyBhbGwgdGhlIGNvZGUgYW5kIGZ1bGwgaGlzdG9yeQotIFNldHMgdXAgYG9yaWdpbmAgYXMgdGhlIHJlbW90ZSBwb2ludGluZyB0byBHaXRIdWIKLSBZb3UncmUgcmVhZHkgdG8gd29yawoKIyMjIFN0ZXAgMTU6IENyZWF0ZSBhIEJyYW5jaCBhbmQgTWFrZSBDaGFuZ2VzCgpTYW1lIHdvcmtmbG93IGFzIGJlZm9yZToKCmBgYApnaXQgY2hlY2tvdXQgLWIgdXBkYXRlLWhvbWVwYWdlCmBgYAoKRWRpdCB5b3VyIGZpbGVzLCB0aGVuOgoKYGBgCmdpdCBhZGQgLgpnaXQgY29tbWl0IC1tICJNb2Rlcm5pemUgaG9tZXBhZ2Ugd2l0aCBwcm9wZXIgSFRNTDUgc3RydWN0dXJlIgpnaXQgcHVzaCAtdSBvcmlnaW4gdXBkYXRlLWhvbWVwYWdlCmBgYAoKIyMjIFN0ZXAgMTY6IENyZWF0ZSBhbmQgTWVyZ2UgdGhlIFBSCgpgYGAKZ2ggcHIgY3JlYXRlIC0tdGl0bGUgIk1vZGVybml6ZSBob21lcGFnZSIgLS1ib2R5ICJVcGRhdGVzIGluZGV4Lmh0bWwgd2l0aCBwcm9wZXIgSFRNTDUgc3RydWN0dXJlLiIKZ2ggcHIgbWVyZ2UgMSAtLW1lcmdlIC0tZGVsZXRlLWJyYW5jaApgYGAKCiMjIyBTdGVwIDE3OiBDbGVhbiBVcCB0aGUgTG9jYWwgQ2xvbmUKCk9uY2UgeW91J3JlIGRvbmUgYW5kIHRoZSBQUiBpcyBtZXJnZWQsIHlvdXIgY29kZSBpcyBzYWZlIG9uIEdpdEh1Yi4gWW91IGNhbiBkZWxldGUgdGhlIGxvY2FsIGZvbGRlcjoKCioqVmVyaWZ5IEdpdEh1YiBpcyBpbiBzeW5jIGZpcnN0OioqCgpgYGAKZ2l0IGxvZyAtLW9uZWxpbmUgLTMKYGBgCgoqKlRoZW4gZGVsZXRlIHRoZSBsb2NhbCBjbG9uZSAoV2luZG93cyBQb3dlclNoZWxsKToqKgoKYGBgCmNkIC4uClJlbW92ZS1JdGVtIC1SZWN1cnNlIC1Gb3JjZSAuXHRlc3RnaXQKYGBgCgo+IOKaoO+4jyAqKkltcG9ydGFudDoqKiBUaGlzIG9ubHkgZGVsZXRlcyB0aGUgZm9sZGVyIG9uIFlPVVIgY29tcHV0ZXIuIFRoZSByZXBvc2l0b3J5IGFuZCBhbGwgaXRzIGhpc3RvcnkgcmVtYWluIHNhZmUgb24gR2l0SHViLiBZb3UgY2FuIGFsd2F5cyBjbG9uZSBpdCBhZ2FpbiBsYXRlci4KCi0tLQoKIyMgUXVpY2sgUmVmZXJlbmNlIOKAlCBUaGUgRnVsbCBXb3JrZmxvdwoKYGBgCiMgT05FLVRJTUUgU0VUVVAKZ2ggYXV0aCBsb2dpbiAtcCBodHRwcyAtdwpnaXQgY29uZmlnIC0tZ2xvYmFsIHVzZXIubmFtZSAiWW91ciBOYW1lIgpnaXQgY29uZmlnIC0tZ2xvYmFsIHVzZXIuZW1haWwgInlvdXJAZW1haWwuY29tIgoKIyBDUkVBVEUgQSBORVcgUkVQTwpta2RpciBteS1wcm9qZWN0ICYmIGNkIG15LXByb2plY3QKZ2l0IGluaXQKIyAuLi4gY3JlYXRlIHlvdXIgZmlsZXMgLi4uCmdpdCBhZGQgLgpnaXQgY29tbWl0IC1tICJJbml0aWFsIGNvbW1pdCIKZ2ggcmVwbyBjcmVhdGUgbXktcHJvamVjdCAtLXB1YmxpYyAtLXNvdXJjZT0uIC0tcHVzaAoKIyBNQUtFIENIQU5HRVMgVklBIFBSCmdpdCBjaGVja291dCAtYiBmZWF0dXJlLW5hbWUKIyAuLi4gZWRpdCBmaWxlcyAuLi4KZ2l0IGFkZCAuCmdpdCBjb21taXQgLW0gIkRlc2NyaWJlIHlvdXIgY2hhbmdlcyIKZ2l0IHB1c2ggLXUgb3JpZ2luIGZlYXR1cmUtbmFtZQpnaCBwciBjcmVhdGUgLS10aXRsZSAiVGl0bGUiIC0tYm9keSAiRGVzY3JpcHRpb24iCmdoIHByIG1lcmdlIE5VTUJFUiAtLW1lcmdlIC0tZGVsZXRlLWJyYW5jaAoKIyBXT1JLIFdJVEggRVhJU1RJTkcgUkVQTwpnaCByZXBvIGxpc3QKZ2ggcmVwbyBjbG9uZSBVU0VSTkFNRS9SRVBPCmNkIFJFUE8KZ2l0IGNoZWNrb3V0IC1iIGJyYW5jaC1uYW1lCiMgLi4uIGVkaXQgZmlsZXMgLi4uCmdpdCBhZGQgLiAmJiBnaXQgY29tbWl0IC1tICJDaGFuZ2VzIiAmJiBnaXQgcHVzaCAtdSBvcmlnaW4gYnJhbmNoLW5hbWUKZ2ggcHIgY3JlYXRlIC0tdGl0bGUgIlRpdGxlIiAtLWJvZHkgIkRlc2NyaXB0aW9uIgpnaCBwciBtZXJnZSBOVU1CRVIgLS1tZXJnZSAtLWRlbGV0ZS1icmFuY2gKCiMgQ0xFQU5VUApjZCAuLgpSZW1vdmUtSXRlbSAtUmVjdXJzZSAtRm9yY2UgLlxSRVBPCmBgYAoKLS0tCgojIyBHbG9zc2FyeQoKfCBUZXJtIHwgTWVhbmluZyB8CnwtLS0tLS18LS0tLS0tLS0tfAp8ICoqUmVwb3NpdG9yeSAoUmVwbykqKiB8IEEgZm9sZGVyIHRyYWNrZWQgYnkgR2l0LCBjb250YWluaW5nIHlvdXIgY29kZSBhbmQgaXRzIGZ1bGwgaGlzdG9yeSB8CnwgKipDb21taXQqKiB8IEEgc2F2ZWQgc25hcHNob3Qgb2YgeW91ciBjb2RlIGF0IGEgcG9pbnQgaW4gdGltZSB8CnwgKipCcmFuY2gqKiB8IEEgc2VwYXJhdGUgbGluZSBvZiBkZXZlbG9wbWVudCAobGlrZSBhIHBhcmFsbGVsIHVuaXZlcnNlIGZvciB5b3VyIGNvZGUpIHwKfCAqKk1haW4gLyBNYXN0ZXIqKiB8IFRoZSBkZWZhdWx0LCBzdGFibGUgYnJhbmNoIHwKfCAqKlJlbW90ZSoqIHwgVGhlIGNvcHkgb2YgeW91ciByZXBvIG9uIEdpdEh1YiAoY2FsbGVkIGBvcmlnaW5gKSB8CnwgKipDbG9uZSoqIHwgRG93bmxvYWQgYSBHaXRIdWIgcmVwbyB0byB5b3VyIGxvY2FsIG1hY2hpbmUgfAp8ICoqUHVzaCoqIHwgVXBsb2FkIHlvdXIgbG9jYWwgY29tbWl0cyB0byBHaXRIdWIgfAp8ICoqUHVsbCoqIHwgRG93bmxvYWQgdGhlIGxhdGVzdCBjaGFuZ2VzIGZyb20gR2l0SHViIHRvIHlvdXIgbG9jYWwgbWFjaGluZSB8CnwgKipQdWxsIFJlcXVlc3QgKFBSKSoqIHwgQSByZXF1ZXN0IHRvIG1lcmdlIHlvdXIgYnJhbmNoIGludG8gdGhlIG1haW4gYnJhbmNoLCB3aXRoIHJldmlldyB8CnwgKipNZXJnZSoqIHwgQ29tYmluZSBjaGFuZ2VzIGZyb20gb25lIGJyYW5jaCBpbnRvIGFub3RoZXIgfAp8ICoqU3RhZ2UgKGdpdCBhZGQpKiogfCBTZWxlY3QgZmlsZXMgdG8gaW5jbHVkZSBpbiB5b3VyIG5leHQgY29tbWl0IHwKfCAqKkhFQUQqKiB8IEEgcG9pbnRlciB0byB5b3VyIGN1cnJlbnQgY29tbWl0L2JyYW5jaCB8Cg==",
+            commands: "IyBBZHZhbmNlZCBHaXQgQ29tbWFuZHMgUmVmZXJlbmNlCgpBIGNvbXByZWhlbnNpdmUgcmVmZXJlbmNlIGZvciBHaXQgYW5kIEdpdEh1YiBDTEkgcG93ZXIgdXNlcnMuCgotLS0KCiMjIFRhYmxlIG9mIENvbnRlbnRzCgotIFtDb25maWd1cmF0aW9uXSgjY29uZmlndXJhdGlvbikKLSBbUmVwb3NpdG9yeSBNYW5hZ2VtZW50XSgjcmVwb3NpdG9yeS1tYW5hZ2VtZW50KQotIFtCcmFuY2hpbmcgJiBTd2l0Y2hpbmddKCNicmFuY2hpbmctLXN3aXRjaGluZykKLSBbU3RhZ2luZyAmIENvbW1pdHRpbmddKCNzdGFnaW5nLS1jb21taXR0aW5nKQotIFtWaWV3aW5nIEhpc3RvcnkgJiBEaWZmc10oI3ZpZXdpbmctaGlzdG9yeS0tZGlmZnMpCi0gW1JlbW90ZSBPcGVyYXRpb25zXSgjcmVtb3RlLW9wZXJhdGlvbnMpCi0gW01lcmdpbmcgJiBSZWJhc2luZ10oI21lcmdpbmctLXJlYmFzaW5nKQotIFtTdGFzaGluZ10oI3N0YXNoaW5nKQotIFtUYWdnaW5nICYgUmVsZWFzZXNdKCN0YWdnaW5nLS1yZWxlYXNlcykKLSBbVW5kb2luZyBDaGFuZ2VzXSgjdW5kb2luZy1jaGFuZ2VzKQotIFtDaGVycnktUGlja10oI2NoZXJyeS1waWNrKQotIFtTZWFyY2hpbmcgJiBEZWJ1Z2dpbmddKCNzZWFyY2hpbmctLWRlYnVnZ2luZykKLSBbU3VibW9kdWxlc10oI3N1Ym1vZHVsZXMpCi0gW0dpdEh1YiBDTEkgKGdoKSBDb21tYW5kc10oI2dpdGh1Yi1jbGktZ2gtY29tbWFuZHMpCi0gW0dpdCBBbGlhc2VzXSgjZ2l0LWFsaWFzZXMpCi0gW1RpcHMgJiBCZXN0IFByYWN0aWNlc10oI3RpcHMtLWJlc3QtcHJhY3RpY2VzKQoKLS0tCgojIyBDb25maWd1cmF0aW9uCgojIyMgR2xvYmFsIFNldHRpbmdzCgpgYGBiYXNoCiMgU2V0IHlvdXIgaWRlbnRpdHkKZ2l0IGNvbmZpZyAtLWdsb2JhbCB1c2VyLm5hbWUgIllvdXIgTmFtZSIKZ2l0IGNvbmZpZyAtLWdsb2JhbCB1c2VyLmVtYWlsICJ5b3VAZXhhbXBsZS5jb20iCgojIFNldCBkZWZhdWx0IGJyYW5jaCBuYW1lIGZvciBuZXcgcmVwb3MKZ2l0IGNvbmZpZyAtLWdsb2JhbCBpbml0LmRlZmF1bHRCcmFuY2ggbWFpbgoKIyBTZXQgZGVmYXVsdCBlZGl0b3IgKGUuZy4sIFZTIENvZGUpCmdpdCBjb25maWcgLS1nbG9iYWwgY29yZS5lZGl0b3IgImNvZGUgLS13YWl0IgoKIyBFbmFibGUgY29sb3JlZCBvdXRwdXQKZ2l0IGNvbmZpZyAtLWdsb2JhbCBjb2xvci51aSBhdXRvCgojIFNldCBsaW5lIGVuZGluZyBiZWhhdmlvciAoV2luZG93cykKZ2l0IGNvbmZpZyAtLWdsb2JhbCBjb3JlLmF1dG9jcmxmIHRydWUKCiMgU2V0IGxpbmUgZW5kaW5nIGJlaGF2aW9yIChNYWMvTGludXgpCmdpdCBjb25maWcgLS1nbG9iYWwgY29yZS5hdXRvY3JsZiBpbnB1dApgYGAKCiMjIyBWaWV3IEFsbCBTZXR0aW5ncwoKYGBgYmFzaAojIExpc3QgYWxsIGNvbmZpZyB2YWx1ZXMgYW5kIHdoZXJlIHRoZXkgY29tZSBmcm9tCmdpdCBjb25maWcgLS1saXN0IC0tc2hvdy1vcmlnaW4KCiMgQ2hlY2sgYSBzcGVjaWZpYyB2YWx1ZQpnaXQgY29uZmlnIHVzZXIubmFtZQpgYGAKCiMjIyBQZXItUmVwb3NpdG9yeSBTZXR0aW5ncwoKYGBgYmFzaAojIE92ZXJyaWRlIGdsb2JhbCBzZXR0aW5ncyBmb3Igb25lIHJlcG8KZ2l0IGNvbmZpZyB1c2VyLm5hbWUgIldvcmsgTmFtZSIKZ2l0IGNvbmZpZyB1c2VyLmVtYWlsICJ3b3JrQGNvbXBhbnkuY29tIgpgYGAKCi0tLQoKIyMgUmVwb3NpdG9yeSBNYW5hZ2VtZW50CgojIyMgQ3JlYXRlICYgSW5pdGlhbGl6ZQoKYGBgYmFzaAojIEluaXRpYWxpemUgYSBuZXcgcmVwbyBpbiBjdXJyZW50IGRpcmVjdG9yeQpnaXQgaW5pdAoKIyBJbml0aWFsaXplIHdpdGggYSBzcGVjaWZpYyBkZWZhdWx0IGJyYW5jaCBuYW1lCmdpdCBpbml0IC1iIG1haW4KCiMgQ2xvbmUgYSByZXBvIChIVFRQUykKZ2l0IGNsb25lIGh0dHBzOi8vZ2l0aHViLmNvbS91c2VyL3JlcG8uZ2l0CgojIENsb25lIGEgc3BlY2lmaWMgYnJhbmNoIG9ubHkKZ2l0IGNsb25lIC1iIGRldmVsb3AgLS1zaW5nbGUtYnJhbmNoIGh0dHBzOi8vZ2l0aHViLmNvbS91c2VyL3JlcG8uZ2l0CgojIENsb25lIHdpdGggbGltaXRlZCBoaXN0b3J5IChmYXN0ZXIgZm9yIGxhcmdlIHJlcG9zKQpnaXQgY2xvbmUgLS1kZXB0aCAxIGh0dHBzOi8vZ2l0aHViLmNvbS91c2VyL3JlcG8uZ2l0CgojIENsb25lIGludG8gYSBzcGVjaWZpYyBmb2xkZXIgbmFtZQpnaXQgY2xvbmUgaHR0cHM6Ly9naXRodWIuY29tL3VzZXIvcmVwby5naXQgbXktZm9sZGVyCmBgYAoKIyMjIC5naXRpZ25vcmUKCkNyZWF0ZSBhIGAuZ2l0aWdub3JlYCBmaWxlIHRvIHRlbGwgR2l0IHdoaWNoIGZpbGVzIHRvIHNraXA6CgpgYGAKIyBEZXBlbmRlbmNpZXMKbm9kZV9tb2R1bGVzLwp2ZW5kb3IvCgojIEJ1aWxkIG91dHB1dApkaXN0LwpidWlsZC8KKi5leGUKKi5kbGwKCiMgSURFIGZpbGVzCi52c2NvZGUvCi5pZGVhLwoqLnN3cAoKIyBPUyBmaWxlcwouRFNfU3RvcmUKVGh1bWJzLmRiCgojIEVudmlyb25tZW50IGZpbGVzIChORVZFUiBjb21taXQgc2VjcmV0cyEpCi5lbnYKLmVudi5sb2NhbAoqLmtleQoqLnBlbQpgYGAKCi0tLQoKIyMgQnJhbmNoaW5nICYgU3dpdGNoaW5nCgojIyMgQ3JlYXRpbmcgQnJhbmNoZXMKCmBgYGJhc2gKIyBDcmVhdGUgYSBuZXcgYnJhbmNoCmdpdCBicmFuY2ggZmVhdHVyZS1sb2dpbgoKIyBDcmVhdGUgQU5EIHN3aXRjaCB0byBpdApnaXQgY2hlY2tvdXQgLWIgZmVhdHVyZS1sb2dpbgoKIyBNb2Rlcm4gYWx0ZXJuYXRpdmUgKEdpdCAyLjIzKykKZ2l0IHN3aXRjaCAtYyBmZWF0dXJlLWxvZ2luCgojIENyZWF0ZSBhIGJyYW5jaCBmcm9tIGEgc3BlY2lmaWMgY29tbWl0CmdpdCBjaGVja291dCAtYiBob3RmaXggYWJjMTIzNAoKIyBDcmVhdGUgYSBicmFuY2ggZnJvbSBhIHJlbW90ZSBicmFuY2gKZ2l0IGNoZWNrb3V0IC1iIGxvY2FsLW5hbWUgb3JpZ2luL3JlbW90ZS1icmFuY2gKYGBgCgojIyMgTGlzdGluZyBCcmFuY2hlcwoKYGBgYmFzaAojIExpc3QgbG9jYWwgYnJhbmNoZXMgKCogPSBjdXJyZW50KQpnaXQgYnJhbmNoCgojIExpc3QgcmVtb3RlIGJyYW5jaGVzCmdpdCBicmFuY2ggLXIKCiMgTGlzdCBBTEwgYnJhbmNoZXMgKGxvY2FsICsgcmVtb3RlKQpnaXQgYnJhbmNoIC1hCgojIExpc3QgYnJhbmNoZXMgd2l0aCBsYXN0IGNvbW1pdCBpbmZvCmdpdCBicmFuY2ggLXYKCiMgTGlzdCBtZXJnZWQgYnJhbmNoZXMgKHNhZmUgdG8gZGVsZXRlKQpnaXQgYnJhbmNoIC0tbWVyZ2VkCgojIExpc3QgdW5tZXJnZWQgYnJhbmNoZXMgKE5PVCBzYWZlIHRvIGRlbGV0ZSkKZ2l0IGJyYW5jaCAtLW5vLW1lcmdlZApgYGAKCiMjIyBTd2l0Y2hpbmcgQnJhbmNoZXMKCmBgYGJhc2gKIyBTd2l0Y2ggdG8gYW4gZXhpc3RpbmcgYnJhbmNoCmdpdCBjaGVja291dCBtYWluCmdpdCBzd2l0Y2ggbWFpbiAgICAgICAgICAjIG1vZGVybiBhbHRlcm5hdGl2ZQoKIyBTd2l0Y2ggdG8gcHJldmlvdXMgYnJhbmNoIChsaWtlIGNkIC0pCmdpdCBjaGVja291dCAtCmdpdCBzd2l0Y2ggLSAgICAgICAgICAgICAjIG1vZGVybiBhbHRlcm5hdGl2ZQpgYGAKCiMjIyBEZWxldGluZyBCcmFuY2hlcwoKYGBgYmFzaAojIERlbGV0ZSBhIG1lcmdlZCBicmFuY2gKZ2l0IGJyYW5jaCAtZCBmZWF0dXJlLWxvZ2luCgojIEZvcmNlIGRlbGV0ZSBhbiB1bm1lcmdlZCBicmFuY2ggKENBUkVGVUw6IGxvc2VzIHVubWVyZ2VkIHdvcmspCmdpdCBicmFuY2ggLUQgZmVhdHVyZS1sb2dpbgoKIyBEZWxldGUgYSByZW1vdGUgYnJhbmNoCmdpdCBwdXNoIG9yaWdpbiAtLWRlbGV0ZSBmZWF0dXJlLWxvZ2luCmBgYAoKIyMjIFJlbmFtaW5nIEJyYW5jaGVzCgpgYGBiYXNoCiMgUmVuYW1lIGN1cnJlbnQgYnJhbmNoCmdpdCBicmFuY2ggLW0gbmV3LW5hbWUKCiMgUmVuYW1lIGEgc3BlY2lmaWMgYnJhbmNoCmdpdCBicmFuY2ggLW0gb2xkLW5hbWUgbmV3LW5hbWUKYGBgCgotLS0KCiMjIFN0YWdpbmcgJiBDb21taXR0aW5nCgojIyMgU3RhZ2luZyBGaWxlcwoKYGBgYmFzaAojIFN0YWdlIGEgc3BlY2lmaWMgZmlsZQpnaXQgYWRkIGluZGV4Lmh0bWwKCiMgU3RhZ2UgbXVsdGlwbGUgc3BlY2lmaWMgZmlsZXMKZ2l0IGFkZCBpbmRleC5odG1sIHN0eWxlLmNzcyBzY3JpcHQuanMKCiMgU3RhZ2UgYWxsIGNoYW5nZXMgaW4gY3VycmVudCBkaXJlY3RvcnkgYW5kIHN1YmRpcmVjdG9yaWVzCmdpdCBhZGQgLgoKIyBTdGFnZSBhbGwgY2hhbmdlcyBpbiB0aGUgZW50aXJlIHJlcG8KZ2l0IGFkZCAtQQoKIyBTdGFnZSBwYXJ0cyBvZiBhIGZpbGUgaW50ZXJhY3RpdmVseSAoY2hvb3NlIHdoaWNoIGh1bmtzIHRvIGFkZCkKZ2l0IGFkZCAtcCBmaWxlbmFtZS50eHQKCiMgVW5zdGFnZSBhIGZpbGUgKGtlZXAgY2hhbmdlcywganVzdCByZW1vdmUgZnJvbSBzdGFnaW5nKQpnaXQgcmVzdG9yZSAtLXN0YWdlZCBmaWxlbmFtZS50eHQKYGBgCgojIyMgQ29tbWl0dGluZwoKYGBgYmFzaAojIENvbW1pdCB3aXRoIGEgbWVzc2FnZQpnaXQgY29tbWl0IC1tICJBZGQgbG9naW4gcGFnZSIKCiMgQ29tbWl0IHdpdGggYSBtdWx0aS1saW5lIG1lc3NhZ2UKZ2l0IGNvbW1pdCAtbSAiQWRkIGxvZ2luIHBhZ2UiIC1tICJJbmNsdWRlcyBmb3JtIHZhbGlkYXRpb24gYW5kIGVycm9yIGhhbmRsaW5nIgoKIyBTdGFnZSBhbGwgdHJhY2tlZCBmaWxlcyBBTkQgY29tbWl0IGluIG9uZSBzdGVwCmdpdCBjb21taXQgLWFtICJGaXggdHlwbyBpbiBoZWFkZXIiCgojIEFtZW5kIHRoZSBsYXN0IGNvbW1pdCAoY2hhbmdlIG1lc3NhZ2Ugb3IgYWRkIGZvcmdvdHRlbiBmaWxlcykKZ2l0IGFkZCBmb3Jnb3R0ZW4tZmlsZS50eHQKZ2l0IGNvbW1pdCAtLWFtZW5kIC1tICJVcGRhdGVkIGNvbW1pdCBtZXNzYWdlIgoKIyBBbWVuZCB3aXRob3V0IGNoYW5naW5nIHRoZSBtZXNzYWdlCmdpdCBjb21taXQgLS1hbWVuZCAtLW5vLWVkaXQKCiMgQ3JlYXRlIGFuIGVtcHR5IGNvbW1pdCAodXNlZnVsIGZvciB0cmlnZ2VyaW5nIENJL0NEKQpnaXQgY29tbWl0IC0tYWxsb3ctZW1wdHkgLW0gIlRyaWdnZXIgcmVidWlsZCIKYGBgCgojIyMgQ29tbWl0IE1lc3NhZ2UgQmVzdCBQcmFjdGljZXMKCmBgYAp0eXBlOiBzaG9ydCBkZXNjcmlwdGlvbiAoNTAgY2hhcnMgb3IgbGVzcykKCkxvbmdlciBleHBsYW5hdGlvbiBpZiBuZWVkZWQuIFdyYXAgYXQgNzIgY2hhcmFjdGVycy4KRXhwbGFpbiBXSEFUIGFuZCBXSFksIG5vdCBIT1cgKHRoZSBjb2RlIHNob3dzIGhvdykuCgpDb21tb24gdHlwZXM6CiAgZmVhdDogICAgIEEgbmV3IGZlYXR1cmUKICBmaXg6ICAgICAgQSBidWcgZml4CiAgZG9jczogICAgIERvY3VtZW50YXRpb24gY2hhbmdlcwogIHN0eWxlOiAgICBGb3JtYXR0aW5nIChubyBjb2RlIGNoYW5nZSkKICByZWZhY3RvcjogQ29kZSByZXN0cnVjdHVyaW5nIChubyBiZWhhdmlvciBjaGFuZ2UpCiAgdGVzdDogICAgIEFkZGluZyBvciB1cGRhdGluZyB0ZXN0cwogIGNob3JlOiAgICBNYWludGVuYW5jZSB0YXNrcwpgYGAKCi0tLQoKIyMgVmlld2luZyBIaXN0b3J5ICYgRGlmZnMKCiMjIyBMb2cgLyBIaXN0b3J5CgpgYGBiYXNoCiMgQmFzaWMgbG9nCmdpdCBsb2cKCiMgQ29tcGFjdCBvbmUtbGluZSBmb3JtYXQKZ2l0IGxvZyAtLW9uZWxpbmUKCiMgU2hvdyBsYXN0IE4gY29tbWl0cwpnaXQgbG9nIC0tb25lbGluZSAtMTAKCiMgU2hvdyBhIHZpc3VhbCBicmFuY2ggZ3JhcGgKZ2l0IGxvZyAtLW9uZWxpbmUgLS1ncmFwaCAtLWFsbAoKIyBTaG93IGNvbW1pdHMgYnkgYSBzcGVjaWZpYyBhdXRob3IKZ2l0IGxvZyAtLWF1dGhvcj0iU3VyZXNoIgoKIyBTaG93IGNvbW1pdHMgaW4gYSBkYXRlIHJhbmdlCmdpdCBsb2cgLS1hZnRlcj0iMjAyNi0wMS0wMSIgLS1iZWZvcmU9IjIwMjYtMDMtMzEiCgojIFNob3cgY29tbWl0cyB0aGF0IGNoYW5nZWQgYSBzcGVjaWZpYyBmaWxlCmdpdCBsb2cgLS0gZmlsZW5hbWUudHh0CgojIFNlYXJjaCBjb21taXQgbWVzc2FnZXMKZ2l0IGxvZyAtLWdyZXA9ImxvZ2luIgoKIyBTaG93IHN0YXRzIChmaWxlcyBjaGFuZ2VkLCBpbnNlcnRpb25zLCBkZWxldGlvbnMpCmdpdCBsb2cgLS1zdGF0CgojIFNob3cgZnVsbCBwYXRjaCAoYWN0dWFsIGNvZGUgY2hhbmdlcykKZ2l0IGxvZyAtcApgYGAKCiMjIyBEaWZmIChTZWUgQ2hhbmdlcykKCmBgYGJhc2gKIyBTZWUgdW5zdGFnZWQgY2hhbmdlcyAod29ya2luZyBkaXJlY3RvcnkgdnMgc3RhZ2VkKQpnaXQgZGlmZgoKIyBTZWUgc3RhZ2VkIGNoYW5nZXMgKHN0YWdlZCB2cyBsYXN0IGNvbW1pdCkKZ2l0IGRpZmYgLS1zdGFnZWQKCiMgQ29tcGFyZSB0d28gYnJhbmNoZXMKZ2l0IGRpZmYgbWFpbi4uZmVhdHVyZS1icmFuY2gKCiMgQ29tcGFyZSBhIHNwZWNpZmljIGZpbGUgYmV0d2VlbiBicmFuY2hlcwpnaXQgZGlmZiBtYWluLi5mZWF0dXJlLWJyYW5jaCAtLSBpbmRleC5odG1sCgojIFNlZSBvbmx5IGZpbGUgbmFtZXMgdGhhdCBjaGFuZ2VkCmdpdCBkaWZmIC0tbmFtZS1vbmx5CgojIFNlZSBhIHN1bW1hcnkgb2YgY2hhbmdlcwpnaXQgZGlmZiAtLXN0YXQKCiMgQ29tcGFyZSB3aXRoIGEgc3BlY2lmaWMgY29tbWl0CmdpdCBkaWZmIGFiYzEyMzQKCiMgQ29tcGFyZSB0d28gY29tbWl0cwpnaXQgZGlmZiBhYmMxMjM0Li5kZWY1Njc4CmBgYAoKIyMjIFNob3cgU3BlY2lmaWMgQ29tbWl0cwoKYGBgYmFzaAojIFNob3cgZGV0YWlscyBvZiBhIHNwZWNpZmljIGNvbW1pdApnaXQgc2hvdyBhYmMxMjM0CgojIFNob3cgYSBmaWxlIGF0IGEgc3BlY2lmaWMgY29tbWl0CmdpdCBzaG93IGFiYzEyMzQ6aW5kZXguaHRtbAoKIyBTaG93IHdoYXQgY2hhbmdlZCBpbiB0aGUgbGFzdCBjb21taXQKZ2l0IHNob3cgSEVBRAoKIyBTaG93IHdobyBjaGFuZ2VkIGVhY2ggbGluZSBvZiBhIGZpbGUgKGJsYW1lKQpnaXQgYmxhbWUgZmlsZW5hbWUudHh0CgojIEJsYW1lIGEgc3BlY2lmaWMgcmFuZ2Ugb2YgbGluZXMKZ2l0IGJsYW1lIC1MIDEwLDIwIGZpbGVuYW1lLnR4dApgYGAKCi0tLQoKIyMgUmVtb3RlIE9wZXJhdGlvbnMKCiMjIyBNYW5hZ2luZyBSZW1vdGVzCgpgYGBiYXNoCiMgTGlzdCByZW1vdGVzCmdpdCByZW1vdGUgLXYKCiMgQWRkIGEgcmVtb3RlCmdpdCByZW1vdGUgYWRkIHVwc3RyZWFtIGh0dHBzOi8vZ2l0aHViLmNvbS9vcmlnaW5hbC9yZXBvLmdpdAoKIyBSZW1vdmUgYSByZW1vdGUKZ2l0IHJlbW90ZSByZW1vdmUgdXBzdHJlYW0KCiMgUmVuYW1lIGEgcmVtb3RlCmdpdCByZW1vdGUgcmVuYW1lIG9yaWdpbiBnaXRodWIKCiMgU2hvdyBkZXRhaWxlZCBpbmZvIGFib3V0IGEgcmVtb3RlCmdpdCByZW1vdGUgc2hvdyBvcmlnaW4KYGBgCgojIyMgUHVzaAoKYGBgYmFzaAojIFB1c2ggY3VycmVudCBicmFuY2gKZ2l0IHB1c2gKCiMgUHVzaCBhbmQgc2V0IHVwc3RyZWFtIHRyYWNraW5nCmdpdCBwdXNoIC11IG9yaWdpbiBmZWF0dXJlLWJyYW5jaAoKIyBQdXNoIGFsbCBicmFuY2hlcwpnaXQgcHVzaCAtLWFsbAoKIyBQdXNoIHRhZ3MKZ2l0IHB1c2ggLS10YWdzCgojIEZvcmNlIHB1c2ggKERBTkdFUjogb3ZlcndyaXRlcyByZW1vdGUgaGlzdG9yeSkKZ2l0IHB1c2ggLS1mb3JjZQoKIyBTYWZlciBmb3JjZSBwdXNoIChmYWlscyBpZiBzb21lb25lIGVsc2UgcHVzaGVkKQpnaXQgcHVzaCAtLWZvcmNlLXdpdGgtbGVhc2UKYGBgCgojIyMgUHVsbCAmIEZldGNoCgpgYGBiYXNoCiMgUHVsbCAoZmV0Y2ggKyBtZXJnZSkKZ2l0IHB1bGwKCiMgUHVsbCB3aXRoIHJlYmFzZSBpbnN0ZWFkIG9mIG1lcmdlIChjbGVhbmVyIGhpc3RvcnkpCmdpdCBwdWxsIC0tcmViYXNlCgojIEZldGNoIG9ubHkgKGRvd25sb2FkIGNoYW5nZXMgYnV0IGRvbid0IG1lcmdlKQpnaXQgZmV0Y2gKCiMgRmV0Y2ggZnJvbSBhbGwgcmVtb3RlcwpnaXQgZmV0Y2ggLS1hbGwKCiMgRmV0Y2ggYW5kIHBydW5lIGRlbGV0ZWQgcmVtb3RlIGJyYW5jaGVzCmdpdCBmZXRjaCAtLXBydW5lCgojIFB1bGwgYSBzcGVjaWZpYyBicmFuY2gKZ2l0IHB1bGwgb3JpZ2luIG1haW4KYGBgCgotLS0KCiMjIE1lcmdpbmcgJiBSZWJhc2luZwoKIyMjIE1lcmdlCgpgYGBiYXNoCiMgTWVyZ2UgYSBicmFuY2ggaW50byBjdXJyZW50IGJyYW5jaApnaXQgbWVyZ2UgZmVhdHVyZS1icmFuY2gKCiMgTWVyZ2Ugd2l0aCBhIGNvbW1pdCBtZXNzYWdlCmdpdCBtZXJnZSBmZWF0dXJlLWJyYW5jaCAtbSAiTWVyZ2UgZmVhdHVyZS1icmFuY2ggaW50byBtYWluIgoKIyBNZXJnZSB3aXRob3V0IGZhc3QtZm9yd2FyZCAoYWx3YXlzIGNyZWF0ZSBhIG1lcmdlIGNvbW1pdCkKZ2l0IG1lcmdlIC0tbm8tZmYgZmVhdHVyZS1icmFuY2gKCiMgQWJvcnQgYSBtZXJnZSBpbiBwcm9ncmVzcyAoaWYgdGhlcmUgYXJlIGNvbmZsaWN0cykKZ2l0IG1lcmdlIC0tYWJvcnQKCiMgU2VlIG1lcmdlIGNvbmZsaWN0cwpnaXQgZGlmZiAtLW5hbWUtb25seSAtLWRpZmYtZmlsdGVyPVUKYGBgCgojIyMgUmVzb2x2aW5nIE1lcmdlIENvbmZsaWN0cwoKV2hlbiBHaXQgY2FuJ3QgYXV0by1tZXJnZSwgaXQgbWFya3MgY29uZmxpY3RzIGluIGZpbGVzIGxpa2UgdGhpczoKCmBgYAo8PDw8PDw8IEhFQUQKWW91ciBjaGFuZ2VzIG9uIHRoZSBjdXJyZW50IGJyYW5jaAo9PT09PT09CkNoYW5nZXMgZnJvbSB0aGUgYnJhbmNoIGJlaW5nIG1lcmdlZAo+Pj4+Pj4+IGZlYXR1cmUtYnJhbmNoCmBgYAoKKipTdGVwcyB0byByZXNvbHZlOioqCjEuIE9wZW4gdGhlIGNvbmZsaWN0ZWQgZmlsZQoyLiBDaG9vc2Ugd2hpY2ggY2hhbmdlcyB0byBrZWVwIChvciBjb21iaW5lIHRoZW0pCjMuIFJlbW92ZSB0aGUgYDw8PDw8PDxgLCBgPT09PT09PWAsIGA+Pj4+Pj4+YCBtYXJrZXJzCjQuIFN0YWdlIHRoZSByZXNvbHZlZCBmaWxlOiBgZ2l0IGFkZCBmaWxlbmFtZS50eHRgCjUuIENvbXBsZXRlIHRoZSBtZXJnZTogYGdpdCBjb21taXRgCgojIyMgUmViYXNlCgpSZWJhc2UgcmVwbGF5cyB5b3VyIGNvbW1pdHMgb24gdG9wIG9mIGFub3RoZXIgYnJhbmNoIChjbGVhbmVyIGxpbmVhciBoaXN0b3J5KToKCmBgYGJhc2gKIyBSZWJhc2UgY3VycmVudCBicmFuY2ggb250byBtYWluCmdpdCByZWJhc2UgbWFpbgoKIyBJbnRlcmFjdGl2ZSByZWJhc2UgKGVkaXQsIHNxdWFzaCwgcmVvcmRlciBjb21taXRzKQpnaXQgcmViYXNlIC1pIEhFQUR+MwoKIyBBYm9ydCBhIHJlYmFzZSBpbiBwcm9ncmVzcwpnaXQgcmViYXNlIC0tYWJvcnQKCiMgQ29udGludWUgYWZ0ZXIgcmVzb2x2aW5nIGNvbmZsaWN0cwpnaXQgcmViYXNlIC0tY29udGludWUKCiMgU2tpcCBhIHByb2JsZW1hdGljIGNvbW1pdCBkdXJpbmcgcmViYXNlCmdpdCByZWJhc2UgLS1za2lwCmBgYAoKIyMjIEludGVyYWN0aXZlIFJlYmFzZSBPcHRpb25zCgpXaGVuIHlvdSBydW4gYGdpdCByZWJhc2UgLWkgSEVBRH4zYCwgYW4gZWRpdG9yIG9wZW5zIHdpdGg6CgpgYGAKcGljayBhYmMxMjM0IEZpcnN0IGNvbW1pdCBtZXNzYWdlCnBpY2sgZGVmNTY3OCBTZWNvbmQgY29tbWl0IG1lc3NhZ2UKcGljayBnaGk5MDEyIFRoaXJkIGNvbW1pdCBtZXNzYWdlCmBgYAoKQ2hhbmdlIGBwaWNrYCB0bzoKLSBgcmV3b3JkYCAocikg4oCUIENoYW5nZSB0aGUgY29tbWl0IG1lc3NhZ2UKLSBgZWRpdGAgKGUpIOKAlCBTdG9wIHRvIGFtZW5kIHRoZSBjb21taXQKLSBgc3F1YXNoYCAocykg4oCUIENvbWJpbmUgd2l0aCBwcmV2aW91cyBjb21taXQgKGtlZXAgbWVzc2FnZSkKLSBgZml4dXBgIChmKSDigJQgQ29tYmluZSB3aXRoIHByZXZpb3VzIGNvbW1pdCAoZGlzY2FyZCBtZXNzYWdlKQotIGBkcm9wYCAoZCkg4oCUIFJlbW92ZSB0aGUgY29tbWl0IGVudGlyZWx5Cgo+IOKaoO+4jyAqKkdvbGRlbiBSdWxlOioqIE5ldmVyIHJlYmFzZSBjb21taXRzIHRoYXQgaGF2ZSBiZWVuIHB1c2hlZCBhbmQgc2hhcmVkIHdpdGggb3RoZXJzLgoKLS0tCgojIyBTdGFzaGluZwoKU3Rhc2ggc2F2ZXMgeW91ciB1bmNvbW1pdHRlZCBjaGFuZ2VzIHRlbXBvcmFyaWx5IHNvIHlvdSBjYW4gc3dpdGNoIGJyYW5jaGVzLgoKYGBgYmFzaAojIFN0YXNoIGN1cnJlbnQgY2hhbmdlcwpnaXQgc3Rhc2gKCiMgU3Rhc2ggd2l0aCBhIGRlc2NyaXB0aW9uCmdpdCBzdGFzaCBzYXZlICJ3b3JrIGluIHByb2dyZXNzIG9uIGxvZ2luIGZvcm0iCgojIFN0YXNoIGluY2x1ZGluZyB1bnRyYWNrZWQgZmlsZXMKZ2l0IHN0YXNoIC11CgojIExpc3QgYWxsIHN0YXNoZXMKZ2l0IHN0YXNoIGxpc3QKCiMgQXBwbHkgdGhlIG1vc3QgcmVjZW50IHN0YXNoIChrZWVwcyBpdCBpbiBzdGFzaCBsaXN0KQpnaXQgc3Rhc2ggYXBwbHkKCiMgQXBwbHkgQU5EIHJlbW92ZSBmcm9tIHN0YXNoIGxpc3QKZ2l0IHN0YXNoIHBvcAoKIyBBcHBseSBhIHNwZWNpZmljIHN0YXNoCmdpdCBzdGFzaCBhcHBseSBzdGFzaEB7Mn0KCiMgU2VlIHdoYXQncyBpbiBhIHN0YXNoCmdpdCBzdGFzaCBzaG93IHN0YXNoQHswfQoKIyBTZWUgdGhlIGZ1bGwgZGlmZiBvZiBhIHN0YXNoCmdpdCBzdGFzaCBzaG93IC1wIHN0YXNoQHswfQoKIyBEcm9wIGEgc3BlY2lmaWMgc3Rhc2gKZ2l0IHN0YXNoIGRyb3Agc3Rhc2hAezB9CgojIENsZWFyIGFsbCBzdGFzaGVzIChDQVJFRlVMISkKZ2l0IHN0YXNoIGNsZWFyCmBgYAoKLS0tCgojIyBUYWdnaW5nICYgUmVsZWFzZXMKClRhZ3MgbWFyayBzcGVjaWZpYyBwb2ludHMgaW4gaGlzdG9yeSAodXN1YWxseSByZWxlYXNlcykuCgpgYGBiYXNoCiMgQ3JlYXRlIGEgbGlnaHR3ZWlnaHQgdGFnCmdpdCB0YWcgdjEuMC4wCgojIENyZWF0ZSBhbiBhbm5vdGF0ZWQgdGFnIChyZWNvbW1lbmRlZCDigJQgaW5jbHVkZXMgbWVzc2FnZSkKZ2l0IHRhZyAtYSB2MS4wLjAgLW0gIlZlcnNpb24gMS4wLjAgcmVsZWFzZSIKCiMgVGFnIGEgc3BlY2lmaWMgY29tbWl0CmdpdCB0YWcgLWEgdjEuMC4wIGFiYzEyMzQgLW0gIlZlcnNpb24gMS4wLjAiCgojIExpc3QgYWxsIHRhZ3MKZ2l0IHRhZwoKIyBMaXN0IHRhZ3MgbWF0Y2hpbmcgYSBwYXR0ZXJuCmdpdCB0YWcgLWwgInYxLioiCgojIFNob3cgdGFnIGRldGFpbHMKZ2l0IHNob3cgdjEuMC4wCgojIFB1c2ggYSB0YWcgdG8gcmVtb3RlCmdpdCBwdXNoIG9yaWdpbiB2MS4wLjAKCiMgUHVzaCBhbGwgdGFncwpnaXQgcHVzaCAtLXRhZ3MKCiMgRGVsZXRlIGEgbG9jYWwgdGFnCmdpdCB0YWcgLWQgdjEuMC4wCgojIERlbGV0ZSBhIHJlbW90ZSB0YWcKZ2l0IHB1c2ggb3JpZ2luIC0tZGVsZXRlIHYxLjAuMApgYGAKCiMjIyBHaXRIdWIgUmVsZWFzZXMgKHZpYSBnaCBDTEkpCgpgYGBiYXNoCiMgQ3JlYXRlIGEgcmVsZWFzZSBmcm9tIGEgdGFnCmdoIHJlbGVhc2UgY3JlYXRlIHYxLjAuMCAtLXRpdGxlICJWZXJzaW9uIDEuMC4wIiAtLW5vdGVzICJGaXJzdCBzdGFibGUgcmVsZWFzZSIKCiMgQ3JlYXRlIGEgcmVsZWFzZSB3aXRoIGF1dG8tZ2VuZXJhdGVkIG5vdGVzCmdoIHJlbGVhc2UgY3JlYXRlIHYxLjAuMCAtLWdlbmVyYXRlLW5vdGVzCgojIExpc3QgcmVsZWFzZXMKZ2ggcmVsZWFzZSBsaXN0CgojIERvd25sb2FkIHJlbGVhc2UgYXNzZXRzCmdoIHJlbGVhc2UgZG93bmxvYWQgdjEuMC4wCmBgYAoKLS0tCgojIyBVbmRvaW5nIENoYW5nZXMKCiMjIyBEaXNjYXJkIFdvcmtpbmcgRGlyZWN0b3J5IENoYW5nZXMKCmBgYGJhc2gKIyBEaXNjYXJkIGNoYW5nZXMgaW4gYSBzcGVjaWZpYyBmaWxlCmdpdCByZXN0b3JlIGZpbGVuYW1lLnR4dApnaXQgY2hlY2tvdXQgLS0gZmlsZW5hbWUudHh0ICAgICAgICAjIG9sZGVyIHN5bnRheAoKIyBEaXNjYXJkIEFMTCB1bmNvbW1pdHRlZCBjaGFuZ2VzIChDQVJFRlVMISkKZ2l0IHJlc3RvcmUgLgpnaXQgY2hlY2tvdXQgLS0gLiAgICAgICAgICAgICAgICAgICAjIG9sZGVyIHN5bnRheApgYGAKCiMjIyBVbnN0YWdlIEZpbGVzCgpgYGBiYXNoCiMgVW5zdGFnZSBhIGZpbGUgKGtlZXAgdGhlIGNoYW5nZXMsIGp1c3QgdW4tYWRkKQpnaXQgcmVzdG9yZSAtLXN0YWdlZCBmaWxlbmFtZS50eHQKZ2l0IHJlc2V0IEhFQUQgZmlsZW5hbWUudHh0ICAgICAgICAgIyBvbGRlciBzeW50YXgKYGBgCgojIyMgVW5kbyBDb21taXRzCgpgYGBiYXNoCiMgVW5kbyBsYXN0IGNvbW1pdCwga2VlcCBjaGFuZ2VzIHN0YWdlZApnaXQgcmVzZXQgLS1zb2Z0IEhFQUR+MQoKIyBVbmRvIGxhc3QgY29tbWl0LCBrZWVwIGNoYW5nZXMgdW5zdGFnZWQKZ2l0IHJlc2V0IEhFQUR+MQpnaXQgcmVzZXQgLS1taXhlZCBIRUFEfjEgICAgICAgICAgICAjIHNhbWUgdGhpbmcgKG1peGVkIGlzIGRlZmF1bHQpCgojIFVuZG8gbGFzdCBjb21taXQsIERJU0NBUkQgYWxsIGNoYW5nZXMgKERBTkdFUiEpCmdpdCByZXNldCAtLWhhcmQgSEVBRH4xCgojIFVuZG8gYSBzcGVjaWZpYyBjb21taXQgYnkgY3JlYXRpbmcgYSBORVcgY29tbWl0IHRoYXQgcmV2ZXJzZXMgaXQKIyAoc2FmZSBmb3Igc2hhcmVkIGJyYW5jaGVzIOKAlCBkb2Vzbid0IHJld3JpdGUgaGlzdG9yeSkKZ2l0IHJldmVydCBhYmMxMjM0CgojIFJldmVydCB0aGUgbGFzdCBjb21taXQKZ2l0IHJldmVydCBIRUFECmBgYAoKIyMjIFJlY292ZXIgRGVsZXRlZCBDb21taXRzCgpgYGBiYXNoCiMgU2hvdyBBTEwgcmVjZW50IEhFQUQgbW92ZW1lbnRzIChpbmNsdWRpbmcgZGVsZXRlZCBjb21taXRzKQpnaXQgcmVmbG9nCgojIFJlc3RvcmUgdG8gYSBzcGVjaWZpYyBwb2ludCBmcm9tIHJlZmxvZwpnaXQgcmVzZXQgLS1oYXJkIEhFQURAezJ9CgojIENyZWF0ZSBhIGJyYW5jaCBmcm9tIGEgImxvc3QiIGNvbW1pdApnaXQgY2hlY2tvdXQgLWIgcmVjb3ZlcnktYnJhbmNoIGFiYzEyMzQKYGBgCgotLS0KCiMjIENoZXJyeS1QaWNrCgpBcHBseSBhIHNwZWNpZmljIGNvbW1pdCBmcm9tIG9uZSBicmFuY2ggdG8gYW5vdGhlcjoKCmBgYGJhc2gKIyBBcHBseSBhIGNvbW1pdCB0byBjdXJyZW50IGJyYW5jaApnaXQgY2hlcnJ5LXBpY2sgYWJjMTIzNAoKIyBDaGVycnktcGljayB3aXRob3V0IGNvbW1pdHRpbmcgKHN0YWdlIG9ubHkpCmdpdCBjaGVycnktcGljayAtLW5vLWNvbW1pdCBhYmMxMjM0CgojIENoZXJyeS1waWNrIGEgcmFuZ2Ugb2YgY29tbWl0cwpnaXQgY2hlcnJ5LXBpY2sgYWJjMTIzNC4uZGVmNTY3OAoKIyBBYm9ydCBhIGNoZXJyeS1waWNrCmdpdCBjaGVycnktcGljayAtLWFib3J0CmBgYAoKLS0tCgojIyBTZWFyY2hpbmcgJiBEZWJ1Z2dpbmcKCmBgYGJhc2gKIyBTZWFyY2ggZmlsZSBjb250ZW50cyBhY3Jvc3MgdGhlIHJlcG8KZ2l0IGdyZXAgInNlYXJjaCB0ZXJtIgoKIyBTZWFyY2ggd2l0aCBsaW5lIG51bWJlcnMKZ2l0IGdyZXAgLW4gIlRPRE8iCgojIFNlYXJjaCBpbiBhIHNwZWNpZmljIGJyYW5jaCBvciBjb21taXQKZ2l0IGdyZXAgImJ1ZyIgbWFpbgoKIyBGaW5kIHdoaWNoIGNvbW1pdCBpbnRyb2R1Y2VkIGEgYnVnIChiaW5hcnkgc2VhcmNoKQpnaXQgYmlzZWN0IHN0YXJ0CmdpdCBiaXNlY3QgYmFkICAgICAgICAgICAgICAjIGN1cnJlbnQgY29tbWl0IGlzIGJhZApnaXQgYmlzZWN0IGdvb2QgYWJjMTIzNCAgICAgIyB0aGlzIG9sZCBjb21taXQgd2FzIGdvb2QKIyBHaXQgY2hlY2tzIG91dCBhIG1pZGRsZSBjb21taXQg4oCUIHRlc3QgaXQsIHRoZW46CmdpdCBiaXNlY3QgZ29vZCAgICAgICAgICAgICAjIG9yIGdpdCBiaXNlY3QgYmFkCiMgUmVwZWF0IHVudGlsIEdpdCBmaW5kcyB0aGUgZXhhY3QgYmFkIGNvbW1pdApnaXQgYmlzZWN0IHJlc2V0ICAgICAgICAgICAgIyBkb25lLCBnbyBiYWNrIHRvIG5vcm1hbApgYGAKCi0tLQoKIyMgU3VibW9kdWxlcwoKSW5jbHVkZSBvdGhlciBHaXQgcmVwb3MgaW5zaWRlIHlvdXIgcmVwbzoKCmBgYGJhc2gKIyBBZGQgYSBzdWJtb2R1bGUKZ2l0IHN1Ym1vZHVsZSBhZGQgaHR0cHM6Ly9naXRodWIuY29tL3VzZXIvbGlicmFyeS5naXQgbGlicy9saWJyYXJ5CgojIENsb25lIGEgcmVwbyBXSVRIIGl0cyBzdWJtb2R1bGVzCmdpdCBjbG9uZSAtLXJlY3Vyc2Utc3VibW9kdWxlcyBodHRwczovL2dpdGh1Yi5jb20vdXNlci9yZXBvLmdpdAoKIyBJbml0aWFsaXplIHN1Ym1vZHVsZXMgYWZ0ZXIgY2xvbmluZwpnaXQgc3VibW9kdWxlIGluaXQKZ2l0IHN1Ym1vZHVsZSB1cGRhdGUKCiMgVXBkYXRlIGFsbCBzdWJtb2R1bGVzIHRvIGxhdGVzdApnaXQgc3VibW9kdWxlIHVwZGF0ZSAtLXJlbW90ZQoKIyBSZW1vdmUgYSBzdWJtb2R1bGUKZ2l0IHN1Ym1vZHVsZSBkZWluaXQgbGlicy9saWJyYXJ5CmdpdCBybSBsaWJzL2xpYnJhcnkKYGBgCgotLS0KCiMjIEdpdEh1YiBDTEkgKGdoKSBDb21tYW5kcwoKIyMjIFJlcG9zaXRvcnkgT3BlcmF0aW9ucwoKYGBgYmFzaAojIENyZWF0ZSBhIG5ldyByZXBvCmdoIHJlcG8gY3JlYXRlIG15LWFwcCAtLXB1YmxpYyAtLXNvdXJjZT0uIC0tcHVzaApnaCByZXBvIGNyZWF0ZSBteS1hcHAgLS1wcml2YXRlIC0tY2xvbmUKCiMgTGlzdCB5b3VyIHJlcG9zCmdoIHJlcG8gbGlzdApnaCByZXBvIGxpc3QgLS1saW1pdCA1MAoKIyBWaWV3IHJlcG8gaW4gYnJvd3NlcgpnaCByZXBvIHZpZXcgLS13ZWIKCiMgRm9yayBhIHJlcG8KZ2ggcmVwbyBmb3JrIG93bmVyL3JlcG8gLS1jbG9uZQoKIyBBcmNoaXZlIGEgcmVwbwpnaCByZXBvIGFyY2hpdmUgb3duZXIvcmVwbwoKIyBEZWxldGUgYSByZXBvIChDQVJFRlVMISkKZ2ggcmVwbyBkZWxldGUgb3duZXIvcmVwbyAtLXllcwpgYGAKCiMjIyBQdWxsIFJlcXVlc3QgT3BlcmF0aW9ucwoKYGBgYmFzaAojIENyZWF0ZSBhIFBSCmdoIHByIGNyZWF0ZSAtLXRpdGxlICJUaXRsZSIgLS1ib2R5ICJEZXNjcmlwdGlvbiIKCiMgQ3JlYXRlIGEgUFIgd2l0aCByZXZpZXdlcnMKZ2ggcHIgY3JlYXRlIC0tdGl0bGUgIlRpdGxlIiAtLXJldmlld2VyIHVzZXIxLHVzZXIyCgojIENyZWF0ZSBhIGRyYWZ0IFBSCmdoIHByIGNyZWF0ZSAtLXRpdGxlICJUaXRsZSIgLS1kcmFmdAoKIyBMaXN0IG9wZW4gUFJzCmdoIHByIGxpc3QKCiMgVmlldyBQUiBkZXRhaWxzCmdoIHByIHZpZXcgMQoKIyBWaWV3IFBSIGluIGJyb3dzZXIKZ2ggcHIgdmlldyAxIC0td2ViCgojIENoZWNrIG91dCBhIFBSIGxvY2FsbHkgKGZvciB0ZXN0aW5nKQpnaCBwciBjaGVja291dCAxCgojIFJldmlldyBhIFBSCmdoIHByIHJldmlldyAxIC0tYXBwcm92ZQpnaCBwciByZXZpZXcgMSAtLXJlcXVlc3QtY2hhbmdlcyAtLWJvZHkgIlBsZWFzZSBmaXggWCIKCiMgTWVyZ2UgYSBQUgpnaCBwciBtZXJnZSAxIC0tbWVyZ2UgLS1kZWxldGUtYnJhbmNoCmdoIHByIG1lcmdlIDEgLS1zcXVhc2ggLS1kZWxldGUtYnJhbmNoCmdoIHByIG1lcmdlIDEgLS1yZWJhc2UgLS1kZWxldGUtYnJhbmNoCgojIENsb3NlIGEgUFIgd2l0aG91dCBtZXJnaW5nCmdoIHByIGNsb3NlIDEKYGBgCgojIyMgSXNzdWUgT3BlcmF0aW9ucwoKYGBgYmFzaAojIENyZWF0ZSBhbiBpc3N1ZQpnaCBpc3N1ZSBjcmVhdGUgLS10aXRsZSAiQnVnOiBsb2dpbiBmYWlscyIgLS1ib2R5ICJTdGVwcyB0byByZXByb2R1Y2UuLi4iCgojIExpc3QgaXNzdWVzCmdoIGlzc3VlIGxpc3QKCiMgVmlldyBhbiBpc3N1ZQpnaCBpc3N1ZSB2aWV3IDEKCiMgQ2xvc2UgYW4gaXNzdWUKZ2ggaXNzdWUgY2xvc2UgMQoKIyBSZW9wZW4gYW4gaXNzdWUKZ2ggaXNzdWUgcmVvcGVuIDEKCiMgQWRkIGxhYmVscwpnaCBpc3N1ZSBlZGl0IDEgLS1hZGQtbGFiZWwgImJ1Zyx1cmdlbnQiCmBgYAoKIyMjIFdvcmtmbG93IC8gQWN0aW9ucwoKYGBgYmFzaAojIExpc3Qgd29ya2Zsb3dzCmdoIHdvcmtmbG93IGxpc3QKCiMgVmlldyB3b3JrZmxvdyBydW5zCmdoIHJ1biBsaXN0CgojIFdhdGNoIGEgcnVubmluZyB3b3JrZmxvdwpnaCBydW4gd2F0Y2gKCiMgVmlldyBydW4gZGV0YWlscwpnaCBydW4gdmlldyAxMjM0NQoKIyBSZS1ydW4gYSBmYWlsZWQgd29ya2Zsb3cKZ2ggcnVuIHJlcnVuIDEyMzQ1CgojIERvd25sb2FkIHdvcmtmbG93IGFydGlmYWN0cwpnaCBydW4gZG93bmxvYWQgMTIzNDUKYGBgCgojIyMgR2lzdHMKCmBgYGJhc2gKIyBDcmVhdGUgYSBnaXN0IGZyb20gYSBmaWxlCmdoIGdpc3QgY3JlYXRlIGZpbGVuYW1lLnR4dAoKIyBDcmVhdGUgYSBwdWJsaWMgZ2lzdApnaCBnaXN0IGNyZWF0ZSBmaWxlbmFtZS50eHQgLS1wdWJsaWMKCiMgTGlzdCB5b3VyIGdpc3RzCmdoIGdpc3QgbGlzdApgYGAKCi0tLQoKIyMgR2l0IEFsaWFzZXMKClNhdmUgdGltZSB3aXRoIHNob3J0Y3V0cy4gQWRkIHRoZXNlIHRvIHlvdXIgY29uZmlnOgoKYGBgYmFzaAojIFNldCB1cCBhbGlhc2VzCmdpdCBjb25maWcgLS1nbG9iYWwgYWxpYXMuc3Qgc3RhdHVzCmdpdCBjb25maWcgLS1nbG9iYWwgYWxpYXMuY28gY2hlY2tvdXQKZ2l0IGNvbmZpZyAtLWdsb2JhbCBhbGlhcy5iciBicmFuY2gKZ2l0IGNvbmZpZyAtLWdsb2JhbCBhbGlhcy5jaSBjb21taXQKZ2l0IGNvbmZpZyAtLWdsb2JhbCBhbGlhcy51bnN0YWdlICJyZXN0b3JlIC0tc3RhZ2VkIgpnaXQgY29uZmlnIC0tZ2xvYmFsIGFsaWFzLmxhc3QgImxvZyAtMSBIRUFEIgpnaXQgY29uZmlnIC0tZ2xvYmFsIGFsaWFzLnZpc3VhbCAibG9nIC0tb25lbGluZSAtLWdyYXBoIC0tYWxsIgpnaXQgY29uZmlnIC0tZ2xvYmFsIGFsaWFzLmFtZW5kICJjb21taXQgLS1hbWVuZCAtLW5vLWVkaXQiCmBgYAoKKipVc2FnZSBhZnRlciBzZXR0aW5nIGFsaWFzZXM6KioKCmBgYGJhc2gKZ2l0IHN0ICAgICAgICAgICAgICAgICAgIyBpbnN0ZWFkIG9mOiBnaXQgc3RhdHVzCmdpdCBjbyBtYWluICAgICAgICAgICAgICMgaW5zdGVhZCBvZjogZ2l0IGNoZWNrb3V0IG1haW4KZ2l0IGJyIC1hICAgICAgICAgICAgICAgIyBpbnN0ZWFkIG9mOiBnaXQgYnJhbmNoIC1hCmdpdCBjaSAtbSAibWVzc2FnZSIgICAgICMgaW5zdGVhZCBvZjogZ2l0IGNvbW1pdCAtbSAibWVzc2FnZSIKZ2l0IHVuc3RhZ2UgZmlsZS50eHQgICAgIyBpbnN0ZWFkIG9mOiBnaXQgcmVzdG9yZSAtLXN0YWdlZCBmaWxlLnR4dApnaXQgbGFzdCAgICAgICAgICAgICAgICAjIGluc3RlYWQgb2Y6IGdpdCBsb2cgLTEgSEVBRApnaXQgdmlzdWFsICAgICAgICAgICAgICAjIGluc3RlYWQgb2Y6IGdpdCBsb2cgLS1vbmVsaW5lIC0tZ3JhcGggLS1hbGwKZ2l0IGFtZW5kICAgICAgICAgICAgICAgIyBpbnN0ZWFkIG9mOiBnaXQgY29tbWl0IC0tYW1lbmQgLS1uby1lZGl0CmBgYAoKLS0tCgojIyBUaXBzICYgQmVzdCBQcmFjdGljZXMKCiMjIyBDb21taXQgT2Z0ZW4sIFB1c2ggUmVndWxhcmx5Ci0gTWFrZSBzbWFsbCwgZm9jdXNlZCBjb21taXRzIChvbmUgbG9naWNhbCBjaGFuZ2UgcGVyIGNvbW1pdCkKLSBQdXNoIGF0IHRoZSBlbmQgb2YgZWFjaCB3b3JrIHNlc3Npb24KCiMjIyBCcmFuY2ggTmFtaW5nIENvbnZlbnRpb25zCmBgYApmZWF0dXJlL2xvZ2luLXBhZ2UKYnVnZml4L2hlYWRlci1vdmVybGFwCmhvdGZpeC9zZWN1cml0eS1wYXRjaApkb2NzL2FwaS1yZWZlcmVuY2UKY2hvcmUvdXBkYXRlLWRlcGVuZGVuY2llcwpgYGAKCiMjIyBQcm90ZWN0IFlvdXIgTWFpbiBCcmFuY2gKLSBOZXZlciBjb21taXQgZGlyZWN0bHkgdG8gYG1haW5gIOKAlCBhbHdheXMgdXNlIFBScwotIEVuYWJsZSBicmFuY2ggcHJvdGVjdGlvbiBydWxlcyBvbiBHaXRIdWIKCiMjIyBLZWVwIEhpc3RvcnkgQ2xlYW4KLSBVc2UgYGdpdCBwdWxsIC0tcmViYXNlYCB0byBhdm9pZCB1bm5lY2Vzc2FyeSBtZXJnZSBjb21taXRzCi0gU3F1YXNoIHNtYWxsIGZpeCBjb21taXRzIGJlZm9yZSBtZXJnaW5nIFBScwoKIyMjIFNlY3VyaXR5Ci0gKipORVZFUiBjb21taXQgc2VjcmV0cyoqIChwYXNzd29yZHMsIEFQSSBrZXlzLCB0b2tlbnMpCi0gVXNlIGAuZ2l0aWdub3JlYCB0byBleGNsdWRlIHNlbnNpdGl2ZSBmaWxlcwotIFVzZSBgLmVudmAgZmlsZXMgZm9yIHNlY3JldHMgKGFuZCBhZGQgYC5lbnZgIHRvIGAuZ2l0aWdub3JlYCkKLSBJZiB5b3UgYWNjaWRlbnRhbGx5IGNvbW1pdCBhIHNlY3JldCwgY29uc2lkZXIgaXQgY29tcHJvbWlzZWQg4oCUIHJvdGF0ZSBpdCBpbW1lZGlhdGVseQoKIyMjIFVzZWZ1bCBTdGF0dXMgQ2hlY2tzCgpgYGBiYXNoCiMgRnVsbCBzdGF0dXMKZ2l0IHN0YXR1cwoKIyBTaG9ydCBzdGF0dXMKZ2l0IHN0YXR1cyAtcwoKIyBTZWUgd2hpY2ggcmVtb3RlIGJyYW5jaGVzIHlvdXIgbG9jYWwgYnJhbmNoZXMgdHJhY2sKZ2l0IGJyYW5jaCAtdnYKCiMgQ2hlY2sgaWYgeW91J3JlIHVwIHRvIGRhdGUgd2l0aCByZW1vdGUKZ2l0IGZldGNoICYmIGdpdCBzdGF0dXMKYGBgCg=="
+        };
+
         const mdFiles = {
             tutorial: 'tutorial.md',
             commands: 'git-commands.md'
         };
 
-        const embeddedIds = {
-            tutorial: 'embedded-tutorial',
-            commands: 'embedded-commands'
-        };
-
         const originalContent = {};
 
-        // Load a local file using XMLHttpRequest (works with file:// protocol)
+        // Try loading .md file via XHR (works on servers + Firefox file://)
         function loadLocalFile(url) {
-            return new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
+            return new Promise(function(resolve, reject) {
+                var xhr = new XMLHttpRequest();
                 xhr.open('GET', url, true);
-                xhr.onreadystatechange = function () {
+                xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4) {
-                        // status 200 = web server, status 0 = file:// protocol
-                        if (xhr.status === 200 || xhr.status === 0) {
-                            if (xhr.responseText) {
-                                resolve(xhr.responseText);
-                            } else {
-                                reject(new Error('Empty response for ' + url));
-                            }
+                        if ((xhr.status === 200 || xhr.status === 0) && xhr.responseText) {
+                            resolve(xhr.responseText);
                         } else {
-                            reject(new Error('HTTP ' + xhr.status + ' for ' + url));
+                            reject(new Error('XHR failed for ' + url));
                         }
                     }
                 };
-                xhr.onerror = function () {
-                    reject(new Error('Network error loading ' + url));
-                };
-                try {
-                    xhr.send();
-                } catch (e) {
-                    reject(e);
-                }
+                xhr.onerror = function() { reject(new Error('Network error')); };
+                try { xhr.send(); } catch (e) { reject(e); }
             });
         }
 
         async function loadMarkdown(tab) {
-            const container = document.getElementById(tab);
-            let text = null;
-            let lastError = '';
+            var container = document.getElementById(tab);
+            var text = null;
 
-            // Try loading from .md file first (works on web servers and Firefox file://)
+            // Try external .md first, fall back to embedded base64
             try {
                 text = await loadLocalFile(mdFiles[tab]);
             } catch (e) {
-                lastError = e.message;
-                // Fall back to embedded content (works in all browsers including Chrome file://)
-                const embedded = document.getElementById(embeddedIds[tab]);
-                if (embedded) {
-                    text = embedded.textContent.replace(/<\\\/script/g, '</script');
-                }
+                try { text = b64decode(EMBEDDED[tab]); } catch (e2) { }
             }
 
             if (text) {
                 marked.setOptions({ breaks: false, gfm: true });
-                const html = marked.parse(text);
-                container.innerHTML = '<div class="markdown-body">' + html + '</div>';
+                container.innerHTML = '<div class="markdown-body">' + marked.parse(text) + '</div>';
                 originalContent[tab] = container.innerHTML;
                 addCopyButtons(container);
             } else {
-                container.innerHTML = `
-                    <div style="text-align:center; padding:40px; color:var(--text-secondary)">
-                        <p style="font-size:48px; margin-bottom:16px">📄</p>
-                        <p><strong>Could not load ${mdFiles[tab]}</strong></p>
-                        <p style="margin-top:8px">Make sure these files are in the same folder as guide.html:</p>
-                        <ul style="list-style:none; margin-top:12px; font-family:monospace">
-                            <li>📁 your-folder/</li>
-                            <li>&nbsp;&nbsp;├── guide.html</li>
-                            <li>&nbsp;&nbsp;├── marked.min.js</li>
-                            <li>&nbsp;&nbsp;├── tutorial.md</li>
-                            <li>&nbsp;&nbsp;└── git-commands.md</li>
-                        </ul>
-                        <p style="margin-top:16px; font-size:13px; color:#cf222e">${lastError}</p>
-                        <p style="margin-top:12px; font-size:13px">
-                            <strong>Tip:</strong> If your browser blocks local file loading, try opening in Firefox<br>
-                            or run a local server: <code>python -m http.server 8080</code>
-                        </p>
-                    </div>`;
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-secondary)"><p>Failed to load content.</p></div>';
             }
         }
+
         // ==== Copy Buttons for Code Blocks ====
         function addCopyButtons(container) {
-            container.querySelectorAll('pre').forEach(pre => {
-                const wrapper = document.createElement('div');
+            container.querySelectorAll('pre').forEach(function(pre) {
+                var wrapper = document.createElement('div');
                 wrapper.className = 'code-wrapper';
                 pre.parentNode.insertBefore(wrapper, pre);
                 wrapper.appendChild(pre);
 
-                const btn = document.createElement('button');
+                var btn = document.createElement('button');
                 btn.className = 'copy-btn';
                 btn.textContent = 'Copy';
-                btn.addEventListener('click', () => {
-                    const code = pre.querySelector('code')?.textContent || pre.textContent;
-                    navigator.clipboard.writeText(code).then(() => {
-                        btn.textContent = '✓ Copied!';
+                btn.addEventListener('click', function() {
+                    var code = pre.querySelector('code') ? pre.querySelector('code').textContent : pre.textContent;
+                    navigator.clipboard.writeText(code).then(function() {
+                        btn.textContent = 'Copied!';
                         btn.classList.add('copied');
-                        setTimeout(() => {
+                        setTimeout(function() {
                             btn.textContent = 'Copy';
                             btn.classList.remove('copied');
                         }, 2000);
@@ -1931,124 +591,81 @@ git fetch && git status
         }
 
         // ==== Tab Switching ====
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tab = btn.dataset.tab;
-
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
                 btn.classList.add('active');
                 document.getElementById(tab).classList.add('active');
-
-                // Clear search when switching tabs
-                const searchBox = document.getElementById('search-box');
-                if (searchBox.value) {
-                    highlightSearch(searchBox.value);
-                }
+                var q = document.getElementById('search-box').value;
+                if (q) highlightSearch(q);
             });
         });
 
         // ==== Dark Mode Toggle ====
-        const themeToggle = document.getElementById('theme-toggle');
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
+        var themeToggle = document.getElementById('theme-toggle');
+        if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.classList.add('dark');
-            themeToggle.textContent = '☀️ Light';
+            themeToggle.textContent = 'Light';
         }
-
-        themeToggle.addEventListener('click', () => {
+        themeToggle.addEventListener('click', function() {
             document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            themeToggle.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+            var isDark = document.documentElement.classList.contains('dark');
+            themeToggle.textContent = isDark ? 'Light' : 'Dark';
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
 
         // ==== Search ====
-        const searchBox = document.getElementById('search-box');
-        const searchCount = document.getElementById('search-count');
-        let searchTimeout;
+        var searchBox = document.getElementById('search-box');
+        var searchCount = document.getElementById('search-count');
+        var searchTimeout;
 
-        searchBox.addEventListener('input', () => {
+        searchBox.addEventListener('input', function() {
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                highlightSearch(searchBox.value);
-            }, 300);
+            searchTimeout = setTimeout(function() { highlightSearch(searchBox.value); }, 300);
         });
 
-        // Ctrl+K shortcut
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                searchBox.focus();
-                searchBox.select();
-            }
-            if (e.key === 'Escape') {
-                searchBox.value = '';
-                highlightSearch('');
-                searchBox.blur();
-            }
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); searchBox.focus(); searchBox.select(); }
+            if (e.key === 'Escape') { searchBox.value = ''; highlightSearch(''); searchBox.blur(); }
         });
 
         function highlightSearch(query) {
-            // Restore original content first
-            Object.keys(originalContent).forEach(tab => {
+            Object.keys(originalContent).forEach(function(tab) {
                 document.getElementById(tab).innerHTML = originalContent[tab];
                 addCopyButtons(document.getElementById(tab));
             });
-
-            if (!query || query.length < 2) {
-                searchCount.style.display = 'none';
-                return;
-            }
-
-            let totalMatches = 0;
-            const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-
-            Object.keys(originalContent).forEach(tab => {
-                const container = document.getElementById(tab);
-                const walker = document.createTreeWalker(
-                    container, NodeFilter.SHOW_TEXT, null
-                );
-
-                const textNodes = [];
+            if (!query || query.length < 2) { searchCount.style.display = 'none'; return; }
+            var totalMatches = 0;
+            var regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+            Object.keys(originalContent).forEach(function(tab) {
+                var container = document.getElementById(tab);
+                var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+                var textNodes = [];
                 while (walker.nextNode()) {
-                    if (!walker.currentNode.parentElement.closest('pre, code, .copy-btn')) {
-                        textNodes.push(walker.currentNode);
-                    }
+                    if (!walker.currentNode.parentElement.closest('pre, code, .copy-btn')) textNodes.push(walker.currentNode);
                 }
-
-                textNodes.forEach(node => {
+                textNodes.forEach(function(node) {
                     if (regex.test(node.textContent)) {
-                        const matches = node.textContent.match(regex);
+                        var matches = node.textContent.match(regex);
                         totalMatches += matches ? matches.length : 0;
-
-                        const span = document.createElement('span');
+                        var span = document.createElement('span');
                         span.innerHTML = node.textContent.replace(regex, '<mark>$1</mark>');
                         node.parentNode.replaceChild(span, node);
                     }
                 });
             });
-
-            searchCount.textContent = `Found ${totalMatches} match${totalMatches !== 1 ? 'es' : ''} for "${query}"`;
-            searchCount.style.display = totalMatches > 0 || query.length >= 2 ? 'block' : 'none';
-        }
-
-        function escapeRegex(str) {
-            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            searchCount.textContent = 'Found ' + totalMatches + ' match' + (totalMatches !== 1 ? 'es' : '') + ' for "' + query + '"';
+            searchCount.style.display = 'block';
         }
 
         // ==== Scroll to Top ====
-        const scrollTopBtn = document.getElementById('scroll-top');
-
-        window.addEventListener('scroll', () => {
+        var scrollTopBtn = document.getElementById('scroll-top');
+        window.addEventListener('scroll', function() {
             scrollTopBtn.style.display = window.scrollY > 400 ? 'flex' : 'none';
         });
-
-        scrollTopBtn.addEventListener('click', () => {
+        scrollTopBtn.addEventListener('click', function() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
